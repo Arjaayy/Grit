@@ -1,6 +1,8 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { SessionProvider } from 'next-auth/react'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import AdminSidebar from '@/components/admin/sidebar'
 import './admin.css'
 
@@ -9,21 +11,29 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
+  
+  // Don't render sidebar on auth pages
+  const isAuthPage = pathname?.includes('/auth')
+  
+  if (isAuthPage) {
+    return (
+      <SessionProvider>
+        {children}
+      </SessionProvider>
+    )
+  }
+
   return (
     <SessionProvider>
-      <div className="admin-layout flex h-screen bg-gray-50">
-        {/* Sidebar */}
-        <div className="w-64 flex-shrink-0">
-          <AdminSidebar />
-        </div>
-        
-        {/* Main content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <main className="flex-1 overflow-auto">
+      <SidebarProvider>
+        <AdminSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-4">
             {children}
-          </main>
-        </div>
-      </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
     </SessionProvider>
   )
 }

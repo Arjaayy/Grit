@@ -3,19 +3,48 @@
 import { useRequireAuth } from '@/lib/client-auth'
 import Link from 'next/link'
 import { 
+  ArrowUpRight,
   Images, 
   Calendar, 
   Users, 
-  ChartBar
+  CreditCard,
+  CurrencyDollar
 } from '@phosphor-icons/react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import LoadingSpinner from '@/components/ui/loading-spinner'
+import AdminPageHeader from '@/components/admin/admin-page-header'
+import DashboardMetricCard from '@/components/admin/dashboard-metric-card'
+import DashboardOverviewChart from '@/components/admin/dashboard-overview-chart'
+import DashboardActivityFeed from '@/components/admin/dashboard-activity-feed'
+import { mockEvents, mockOrganizations } from '@/lib/admin-mock-data'
+import { formatCurrency } from '@/lib/admin-utils'
 
 export default function AdminDashboard() {
-  const { session, loading, authenticated } = useRequireAuth()
+  const { loading, authenticated } = useRequireAuth()
+
+  const totalRevenue = mockEvents.reduce(
+    (sum, e) => sum + e.price * e.registrationsCount,
+    0
+  )
+  const totalRegistrations = mockEvents.reduce(
+    (sum, e) => sum + e.registrationsCount,
+    0
+  )
+  const upcomingEvents = mockEvents.filter((e) => e.registrationStatus === 'Open')
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <LoadingSpinner size="lg" />
       </div>
     )
   }
@@ -24,131 +53,191 @@ export default function AdminDashboard() {
     return null // Will redirect to login
   }
 
-  // Mock stats for now
-  const stats = {
-    totalProjects: 12,
-    totalEvents: 8,
-    totalOrganizations: 15,
-    totalRegistrations: 245,
-    totalRevenue: 48750
-  }
+  const activity = [
+    {
+      id: 'act_1',
+      type: 'registration' as const,
+      title: 'New registration',
+      detail: 'Alex Rivera registered for Summer Soccer Camp',
+      timestamp: '2m',
+    },
+    {
+      id: 'act_2',
+      type: 'event' as const,
+      title: 'Event updated',
+      detail: 'Basketball Tournament registration closed',
+      timestamp: '1h',
+    },
+    {
+      id: 'act_3',
+      type: 'organization' as const,
+      title: 'Organization created',
+      detail: 'Boulder High Athletics added',
+      timestamp: '1d',
+    },
+  ]
 
-  const statCards = [
-    { name: 'Portfolio Projects', value: stats.totalProjects, change: '+2 from last month', icon: Images },
-    { name: 'Active Events', value: stats.totalEvents, change: '+1 from last month', icon: Calendar },
-    { name: 'Organizations', value: stats.totalOrganizations, change: '+3 from last month', icon: Users },
-    { name: 'Total Registrations', value: stats.totalRegistrations, change: '+45 from last month', icon: ChartBar },
+  const overviewData = [
+    { month: 'Jan', registrations: 120, revenue: 52000 },
+    { month: 'Feb', registrations: 180, revenue: 64000 },
+    { month: 'Mar', registrations: 260, revenue: 81000 },
+    { month: 'Apr', registrations: 220, revenue: 76000 },
+    { month: 'May', registrations: 310, revenue: 92000 },
+    { month: 'Jun', registrations: 280, revenue: 88000 },
   ]
 
   return (
-    <div className="p-8">
-      {/* Page header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Welcome back, {session?.user?.name}. Here&apos;s what&apos;s happening with your platform today.
-        </p>
+    <div className="flex-1 space-y-4 p-4 pt-4">
+      <AdminPageHeader
+        title="Dashboard"
+        actions={
+          <div className="flex items-center gap-2">
+            <Select defaultValue="30d">
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Date range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 90 days</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline">
+              <Calendar className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+          </div>
+        }
+      />
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <DashboardMetricCard
+          title="Total Events"
+          value={mockEvents.length}
+          icon={<Calendar data-icon="inline-end" />}
+          footer={
+            <span>
+              <Badge variant="secondary" className="text-xs">
+                +2
+              </Badge>{' '}
+              from last month
+            </span>
+          }
+        />
+
+        <DashboardMetricCard
+          title="Total Organizations"
+          value={mockOrganizations.length}
+          icon={<Users data-icon="inline-end" />}
+          footer={<span>Across leagues, schools, and clubs</span>}
+        />
+
+        <DashboardMetricCard
+          title="Event Registrations"
+          value={totalRegistrations}
+          icon={<CreditCard data-icon="inline-end" />}
+          footer={
+            <span>
+              <Badge variant="secondary" className="text-xs">
+                +12%
+              </Badge>{' '}
+              from last month
+            </span>
+          }
+        />
+
+        <DashboardMetricCard
+          title="Revenue from Events"
+          value={formatCurrency(totalRevenue)}
+          icon={<CurrencyDollar data-icon="inline-end" />}
+          footer={
+            <span>
+              <Badge variant="secondary" className="text-xs">
+                +20%
+              </Badge>{' '}
+              from last month
+            </span>
+          }
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        {statCards.map((stat) => (
-          <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <stat.icon className="h-6 w-6 text-blue-950" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">{stat.name}</dt>
-                    <dd className="text-lg font-medium text-gray-900">{stat.value}</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-50 px-5 py-3">
-              <div className="text-sm text-gray-500">{stat.change}</div>
-            </div>
-          </div>
-        ))}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        {/* Overview Card */}
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <DashboardOverviewChart data={overviewData} />
+          </CardContent>
+        </Card>
+
+        {/* Activity */}
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Activity</CardTitle>
+            <CardDescription>New registrations and updates</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DashboardActivityFeed items={activity} />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200 mb-8">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link
-              href="/admin/portfolio/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900"
-            >
-              <Images className="h-4 w-4 mr-2" />
-              Add Portfolio Project
-            </Link>
-            <Link
-              href="/admin/events/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Create Event
-            </Link>
-            <Link
-              href="/admin/organizations/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Add Organization
-            </Link>
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button asChild>
+              <Link href="/admin/portfolio/new">
+                <Images className="h-4 w-4 mr-2" />
+                Add Portfolio Project
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/admin/events/new">
+                <Calendar className="h-4 w-4 mr-2" />
+                Create Event
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/organizations/new">
+                <Users className="h-4 w-4 mr-2" />
+                Add Organization
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/analytics">
+                <ArrowUpRight className="h-4 w-4 mr-2" />
+                View Analytics
+              </Link>
+            </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Recent Activity */}
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-            Recent Activity
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <Images className="h-5 w-5 text-blue-950" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-gray-900">
-                  New portfolio project <span className="font-medium">&quot;Football Club Website&quot;</span> was published
-                </p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
-              </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Upcoming Events</CardTitle>
+          <CardDescription>Next events with registration open</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {upcomingEvents.map((e) => (
+            <div key={e.id} className="flex items-center gap-3">
+              <div className="text-sm font-medium">{e.name}</div>
+              <div className="text-xs text-muted-foreground">{e.location}</div>
+              <div className="ml-auto text-sm">{e.registrationsCount} regs</div>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <Calendar className="h-5 w-5 text-red-600" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-gray-900">
-                  Event <span className="font-medium">&quot;Summer Soccer Camp&quot;</span> received 15 new registrations
-                </p>
-                <p className="text-xs text-gray-500">5 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <Users className="h-5 w-5 text-blue-950" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-gray-900">
-                  New organization <span className="font-medium">&quot;Denver Basketball League&quot;</span> joined
-                </p>
-                <p className="text-xs text-gray-500">1 day ago</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          ))}
+          {upcomingEvents.length === 0 ? (
+            <div className="text-sm text-muted-foreground">No upcoming events.</div>
+          ) : null}
+        </CardContent>
+      </Card>
     </div>
   )
 }

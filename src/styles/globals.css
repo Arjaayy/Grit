@@ -32,45 +32,45 @@
     --grit-success: 34 197 94; /* green-500 - achievement, winning */
     --grit-warning: 251 146 60; /* orange-400 - caution, alert */
 
-    /* Typography scale */
-    --font-heading: "Druk Wide Trial", sans-serif;
-    --font-body: "Druk Wide Trial", sans-serif;
-    --font-display: "Druk Wide Trial", sans-serif;
+    /* Typography scale - using Inter instead of Druk */
+    --font-heading: "Inter", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-display: "Inter", system-ui, sans-serif;
   }
 
-  /* Apply Druk Wide to everything */
-  * {
+  /* Remove global Druk font application */
+  /* * {
     font-family: "Druk Wide Trial", sans-serif;
-  }
+  } */
 
-  /* Override specific elements */
+  /* Override specific elements - using Inter instead of Druk */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: "Druk Wide Trial", sans-serif;
-    font-weight: 700;
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 600;
   }
 
-  /* Apply Druk Wide to display elements */
-  .text-display,
-  .font-display {
-    font-family: "Druk Wide Trial", sans-serif;
-  }
-
-  /* Apply Druk Wide to body text */
+  /* Apply Inter font to all elements */
   body,
   p,
   span,
-  div {
-    font-family: "Druk Wide Trial", sans-serif;
+  div,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", system-ui, sans-serif;
   }
 
   /* Fallback to ensure fonts load */
   html {
-    font-family: "Druk Wide Trial", sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
   }
 }
 

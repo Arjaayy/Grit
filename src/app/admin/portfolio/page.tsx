@@ -10,26 +10,40 @@ import {
   MagnifyingGlass,
   Funnel
 } from '@phosphor-icons/react'
-
-interface PortfolioProject {
-  id: string
-  title: string
-  slug: string
-  clientName: string
-  sportCategory: string
-  projectType: string
-  status: string
-  featured: boolean
-  createdAt: string
-  thumbnailImage: string
-}
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import LoadingSpinner from '@/components/ui/loading-spinner'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import AdminPageHeader from '@/components/admin/admin-page-header'
+import { formatDateShort } from '@/lib/admin-utils'
+import {
+  deletePortfolioProject,
+  getPortfolioProjects,
+  AdminPortfolioProject,
+} from '@/lib/admin-portfolio-store'
 
 export default function PortfolioManagement() {
-  const [projects, setProjects] = useState<PortfolioProject[]>([])
+  const [projects, setProjects] = useState<AdminPortfolioProject[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterCategory, setFilterCategory] = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
+  const [filterCategory, setFilterCategory] = useState('all')
+  const [filterOrganization, setFilterOrganization] = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [sortKey, setSortKey] = useState<
+    'title' | 'clientName' | 'projectType' | 'status' | 'createdAt'
+  >('createdAt')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null)
 
@@ -39,46 +53,7 @@ export default function PortfolioManagement() {
 
   const fetchProjects = async () => {
     try {
-      // In a real implementation, this would fetch from your API
-      const mockProjects: PortfolioProject[] = [
-        {
-          id: '1',
-          title: 'Football Club Website',
-          slug: 'football-club-website',
-          clientName: 'Denver United FC',
-          sportCategory: 'football',
-          projectType: 'website-redesign',
-          status: 'completed',
-          featured: true,
-          createdAt: '2024-01-15',
-          thumbnailImage: '/images/projects/football-club-thumb.jpg'
-        },
-        {
-          id: '2',
-          title: 'Basketball Tournament Platform',
-          slug: 'basketball-tournament-platform',
-          clientName: 'Colorado Basketball Association',
-          sportCategory: 'basketball',
-          projectType: 'event-platform',
-          status: 'completed',
-          featured: false,
-          createdAt: '2024-02-20',
-          thumbnailImage: '/images/projects/basketball-platform-thumb.jpg'
-        },
-        {
-          id: '3',
-          title: 'Soccer League Management',
-          slug: 'soccer-league-management',
-          clientName: 'Rocky Mountain Soccer',
-          sportCategory: 'soccer',
-          projectType: 'new-website',
-          status: 'in-progress',
-          featured: false,
-          createdAt: '2024-03-10',
-          thumbnailImage: '/images/projects/soccer-league-thumb.jpg'
-        }
-      ]
-      setProjects(mockProjects)
+      setProjects(getPortfolioProjects())
     } catch (error) {
       console.error('Failed to fetch projects:', error)
     } finally {
@@ -86,20 +61,47 @@ export default function PortfolioManagement() {
     }
   }
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = !filterCategory || project.sportCategory === filterCategory
-    const matchesStatus = !filterStatus || project.status === filterStatus
-    
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  const filteredProjects = projects
+    .filter((project) => {
+      const matchesSearch =
+        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
+
+      const matchesCategory =
+        filterCategory === 'all' ||
+        !filterCategory ||
+        project.projectType === filterCategory
+
+      const matchesOrg =
+        filterOrganization === 'all' ||
+        !filterOrganization ||
+        project.clientName === filterOrganization
+
+      const matchesStatus =
+        filterStatus === 'all' || !filterStatus || project.status === filterStatus
+
+      return matchesSearch && matchesCategory && matchesOrg && matchesStatus
+    })
+    .sort((a, b) => {
+      const aVal = a[sortKey]
+      const bVal = b[sortKey]
+      const dir = sortDir === 'asc' ? 1 : -1
+
+      if (sortKey === 'createdAt') {
+        const aTime = new Date(aVal).getTime()
+        const bTime = new Date(bVal).getTime()
+        return (aTime - bTime) * dir
+      }
+
+      return String(aVal).localeCompare(String(bVal)) * dir
+    })
 
   const handleDelete = async (projectId: string) => {
     try {
       // In a real implementation, this would call your API
       console.log('Deleting project:', projectId)
-      setProjects(prev => prev.filter(p => p.id !== projectId))
+      deletePortfolioProject(projectId)
+      setProjects(getPortfolioProjects())
       setShowDeleteModal(false)
       setProjectToDelete(null)
     } catch (error) {
@@ -107,223 +109,296 @@ export default function PortfolioManagement() {
     }
   }
 
-  const categories = Array.from(new Set(projects.map(p => p.sportCategory)))
+  const categories = Array.from(new Set(projects.map(p => p.projectType)))
+  const organizations = Array.from(new Set(projects.map(p => p.clientName)))
   const statuses = Array.from(new Set(projects.map(p => p.status)))
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <LoadingSpinner size="lg" />
       </div>
     )
   }
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Portfolio Management</h1>
-        <p className="text-gray-600">Manage your portfolio projects and case studies</p>
-        <div className="mt-4">
-          <Link
-            href="/admin/portfolio/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Project
-          </Link>
-        </div>
-      </div>
+    <div className="flex-1 space-y-4 p-4 pt-4">
+      <AdminPageHeader
+        title="Portfolio"
+        description="Manage showcase projects for sports organizations"
+        actions={
+          <Button asChild>
+            <Link href="/admin/portfolio/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Project
+            </Link>
+          </Button>
+        }
+      />
 
       {/* Filters and Search */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlass className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
+              <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-950 focus:border-blue-950 font-inter"
+                className="pl-10"
               />
             </div>
             
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-950 focus:border-blue-950 font-inter"
-            >
-              <option value="">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-950 focus:border-blue-950 font-inter"
-            >
-              <option value="">All Status</option>
-              {statuses.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
+            <Select value={filterOrganization} onValueChange={setFilterOrganization}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Organizations" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Organizations</SelectItem>
+                {organizations.map(org => (
+                  <SelectItem key={org} value={org}>{org}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <button
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                {statuses.map(status => (
+                  <SelectItem key={status} value={status}>{status}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
               onClick={() => {
                 setSearchTerm('')
-                setFilterCategory('')
-                setFilterStatus('')
+                setFilterCategory('all')
+                setFilterOrganization('all')
+                setFilterStatus('all')
               }}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 font-inter"
             >
               <Funnel className="h-4 w-4 mr-2" />
               Clear Filters
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Projects Table */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                  <button
+                    type="button"
+                    className="inline-flex items-center"
+                    onClick={() => {
+                      setSortKey('title')
+                      setSortDir((d) => (sortKey === 'title' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'))
+                    }}
+                  >
+                    Project Name
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    type="button"
+                    className="inline-flex items-center"
+                    onClick={() => {
+                      setSortKey('clientName')
+                      setSortDir((d) =>
+                        sortKey === 'clientName' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
+                      )
+                    }}
+                  >
+                    Organization
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    type="button"
+                    className="inline-flex items-center"
+                    onClick={() => {
+                      setSortKey('projectType')
+                      setSortDir((d) =>
+                        sortKey === 'projectType' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
+                      )
+                    }}
+                  >
+                    Category
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    type="button"
+                    className="inline-flex items-center"
+                    onClick={() => {
+                      setSortKey('status')
+                      setSortDir((d) =>
+                        sortKey === 'status' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
+                      )
+                    }}
+                  >
+                    Status
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    type="button"
+                    className="inline-flex items-center"
+                    onClick={() => {
+                      setSortKey('createdAt')
+                      setSortDir((d) =>
+                        sortKey === 'createdAt' ? (d === 'asc' ? 'desc' : 'asc') : 'desc'
+                      )
+                    }}
+                  >
+                    Created Date
+                  </button>
+                </TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredProjects.map((project) => (
-                <div key={project.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                  {/* Project Image */}
-                  <div className="h-48 bg-gray-200 relative">
-                    <img
-                      src={project.thumbnailImage}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/placeholder-project.jpg'
-                      }}
-                    />
-                    {project.featured && (
-                      <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded-md font-medium">
-                        Featured
-                      </div>
-                    )}
-                    <div className="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded-md">
-                      {project.sportCategory}
+                <TableRow key={project.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate">{project.title}</span>
+                      {project.featured ? (
+                        <Badge variant="secondary" className="text-xs">
+                          Featured
+                        </Badge>
+                      ) : null}
                     </div>
-                  </div>
-
-                  {/* Project Info */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">{project.title}</h3>
-                    <div className="mt-2 text-sm text-gray-600 font-inter">{project.clientName}</div>
-                    
-                    <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500 font-inter">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-inter ${
-                        project.status === 'published' 
-                          ? 'bg-green-500 text-white'
-                          : 'bg-red-500 text-white'
-                      }`}>
-                        {project.status}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(project.createdAt).toLocaleDateString()}
-                      </span>
+                  </TableCell>
+                  <TableCell>{project.clientName}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {project.projectType}
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        {project.sportCategory}
+                      </Badge>
                     </div>
-
-                    {/* Actions */}
-                    <div className="flex space-x-2">
-                      <Link
-                        href={`/portfolio/${project.slug}`}
-                        target="_blank"
-                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 font-inter"
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </Link>
-                      <Link
-                        href={`/admin/portfolio/${project.id}/edit`}
-                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 font-inter"
-                      >
-                        <Pencil className="h-3 w-3 mr-1" />
-                        Edit
-                      </Link>
-                      <button
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={project.status === 'completed' ? 'default' : 'secondary'}
+                    >
+                      {project.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{formatDateShort(project.createdAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="inline-flex items-center gap-2">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/admin/portfolio/${project.id}`}>
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/admin/portfolio/${project.id}/edit`}>
+                          <Pencil className="h-3 w-3 mr-1" />
+                          Edit
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
                         onClick={() => {
                           setProjectToDelete(project.id)
                           setShowDeleteModal(true)
                         }}
-                        className="inline-flex items-center px-3 py-1.5 border border-red-300 text-xs font-medium rounded text-red-700 bg-white hover:bg-red-50 font-inter"
                       >
                         <Trash className="h-3 w-3 mr-1" />
                         Delete
-                      </button>
+                      </Button>
                     </div>
-                  </div>
-                </div>
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
+            </TableBody>
+          </Table>
 
-            {filteredProjects.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <Funnel className="h-12 w-12 mx-auto" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2 font-inter">No projects found</h3>
-                <p className="text-gray-600 mb-4 font-inter">
-                  {searchTerm || filterCategory || filterStatus 
-                    ? 'Try adjusting your filters or search terms'
-                    : 'Get started by creating your first portfolio project'
-                  }
-                </p>
-                {!searchTerm && !filterCategory && !filterStatus && (
-                  <Link
-                    href="/admin/portfolio/new"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-950 hover:bg-blue-900 font-inter"
-                  >
+          {filteredProjects.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-muted-foreground mb-4">
+                <Funnel className="h-12 w-12 mx-auto" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">No projects found</h3>
+              <p className="text-muted-foreground mb-4">
+                {searchTerm || filterCategory || filterStatus 
+                  ? 'Try adjusting your filters or search terms'
+                  : 'Get started by creating your first portfolio project'
+                }
+              </p>
+              {!searchTerm && !filterCategory && !filterStatus && (
+                <Button asChild>
+                  <Link href="/admin/portfolio/new">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Your First Project
                   </Link>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+                </Button>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Delete Project
-            </h3>
-            <p className="text-sm text-gray-600 mb-6">
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
               Are you sure you want to delete this project? This action cannot be undone.
-            </p>
-            <div className="flex space-x-4">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false)
-                  setProjectToDelete(null)
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => projectToDelete && handleDelete(projectToDelete)}
-                className="flex-1 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowDeleteModal(false)
+                setProjectToDelete(null)
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => projectToDelete && handleDelete(projectToDelete)}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

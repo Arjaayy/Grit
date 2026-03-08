@@ -150,10 +150,10 @@ npm run type-check   # Run TypeScript checks
 
 ### Colors
 
-- **Primary**: Slate-900 (`#0f172a`) - Professional base
-- **Secondary**: Red-600 (`#dc2626`) - Sports energy
-- **Accent**: Blue-500 (`#3b82f6`) - Trust & reliability
-- **Success**: Green-500 (`#22c55e`) - Achievement & winning
+- **Primary**: Slate-900 (`oklch(12.9% 0.042 264.695)`) - Professional base
+- **Secondary**: Red-600 (`oklch(57.7% 0.245 27.325)`) - Sports energy
+- **Accent**: Blue-500 (`oklch(62.3% 0.214 259.815)`) - Trust & reliability
+- **Success**: Green-500 (`oklch(72.3% 0.219 149.579)`) - Achievement & winning
 
 ### Typography
 
