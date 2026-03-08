@@ -1,3 +1,28 @@
+/* Local Druk Wide Trial font */
+@font-face {
+  font-family: "Druk Wide Trial";
+  src: url("../fonts/DrukWideMediumTrial.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Druk Wide Trial";
+  src: url("../fonts/DrukWideBoldTrial.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Druk Wide Trial";
+  src: url("../fonts/DrukWideHeavyTrial.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     /* Sports-focused color palette */
@@ -8,9 +33,44 @@
     --grit-warning: 251 146 60; /* orange-400 - caution, alert */
 
     /* Typography scale */
-    --font-heading: "Inter", sans-serif;
-    --font-body: "Inter", sans-serif;
-    --font-display: "Inter", sans-serif;
+    --font-heading: "Druk Wide Trial", sans-serif;
+    --font-body: "Druk Wide Trial", sans-serif;
+    --font-display: "Druk Wide Trial", sans-serif;
+  }
+
+  /* Apply Druk Wide to everything */
+  * {
+    font-family: "Druk Wide Trial", sans-serif;
+  }
+
+  /* Override specific elements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Druk Wide Trial", sans-serif;
+    font-weight: 700;
+  }
+
+  /* Apply Druk Wide to display elements */
+  .text-display,
+  .font-display {
+    font-family: "Druk Wide Trial", sans-serif;
+  }
+
+  /* Apply Druk Wide to body text */
+  body,
+  p,
+  span,
+  div {
+    font-family: "Druk Wide Trial", sans-serif;
+  }
+
+  /* Fallback to ensure fonts load */
+  html {
+    font-family: "Druk Wide Trial", sans-serif;
   }
 }
 
@@ -87,7 +147,7 @@
     font-size: 2.25rem;
     font-weight: 700;
     color: rgb(220 38 38);
-    font-family: var(--font-display);
+    font-family: "Inter", sans-serif;
   }
 
   .stat-label {

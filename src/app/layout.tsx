@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/globals.css";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,7 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const geistSans = Geist({
+const geistSans = Geist_Mono({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -40,9 +40,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-mono", jetbrainsMono.variable)}>
+    <html lang="en" className={cn(geistSans.variable)}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} antialiased`}
         suppressHydrationWarning
       >
         {children}
