@@ -41,7 +41,7 @@ export default function DashboardOverviewChart({
               fontSize: 12,
             }}
           />
-          <Bar dataKey="registrations" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="registrations" fill="oklch(51.4% 0.222 16.935)" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

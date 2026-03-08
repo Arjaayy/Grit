@@ -1,317 +1,374 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { 
-  Gear,
-  Bell,
-  Palette,
-  Shield,
-  Database,
-  Mail,
-  Globe,
-  CreditCard
-} from '@phosphor-icons/react'
+import { useMemo, useState } from 'react'
+import { Gear } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-
-interface Settings {
-  siteName: string
-  siteUrl: string
-  adminEmail: string
-  supportEmail: string
-  currency: string
-  timezone: string
-  dateFormat: string
-  emailNotifications: boolean
-  pushNotifications: boolean
-  maintenanceMode: boolean
-  analyticsEnabled: boolean
-  theme: 'light' | 'dark' | 'system'
-}
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import AdminPageHeader from '@/components/admin/admin-page-header'
+import {
+  defaultAdminSettings,
+  getAdminSettings,
+  setAdminSettings,
+  type AdminSettings,
+} from '@/lib/admin-settings-store'
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>({
-    siteName: 'Grit Digital Performance',
-    siteUrl: 'https://gritdigitalperformance.com',
-    adminEmail: 'admin@gritdigitalperformance.com',
-    supportEmail: 'support@gritdigitalperformance.com',
-    currency: 'USD',
-    timezone: 'America/Denver',
-    dateFormat: 'MM/DD/YYYY',
-    emailNotifications: true,
-    pushNotifications: false,
-    maintenanceMode: false,
-    analyticsEnabled: true,
-    theme: 'system'
-  })
-  const [loading, setLoading] = useState(false)
+  const [settings, updateSettings] = useState<AdminSettings>(() => getAdminSettings())
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [active, setActive] = useState<'general' | 'event' | 'payment' | 'admin' | 'seo'>(
+    'general'
+  )
 
-  useEffect(() => {
-    fetchSettings()
-  }, [])
-
-  const fetchSettings = async () => {
-    try {
-      // In a real app, this would fetch from your API
-      // For now, we'll use the default state
-    } catch (error) {
-      console.error('Failed to fetch settings:', error)
-    }
-  }
+  const canSave = useMemo(() => {
+    return Boolean(
+      settings.siteName.trim() &&
+        settings.siteUrl.trim() &&
+        settings.contactEmail.trim() &&
+        settings.supportEmail.trim()
+    )
+  }, [settings])
 
   const handleSave = async () => {
-    setLoading(true)
+    if (!canSave) return
+    setSaving(true)
     try {
-      // In a real app, this would save to your API
-      console.log('Saving settings:', settings)
+      setAdminSettings(settings)
       setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
-    } catch (error) {
-      console.error('Failed to save settings:', error)
+      setTimeout(() => setSaved(false), 2000)
     } finally {
-      setLoading(false)
+      setSaving(false)
     }
   }
 
   const handleReset = () => {
-    setSettings({
-      siteName: 'Grit Digital Performance',
-      siteUrl: 'https://gritdigitalperformance.com',
-      adminEmail: 'admin@gritdigitalperformance.com',
-      supportEmail: 'support@gritdigitalperformance.com',
-      currency: 'USD',
-      timezone: 'America/Denver',
-      dateFormat: 'MM/DD/YYYY',
-      emailNotifications: true,
-      pushNotifications: false,
-      maintenanceMode: false,
-      analyticsEnabled: true,
-      theme: 'system'
-    })
+    updateSettings(defaultAdminSettings)
   }
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" onClick={handleReset}>
-            Reset to Defaults
-          </Button>
-          <Button 
-            className="bg-blue-950 hover:bg-blue-900" 
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Settings"
+        description="System configuration"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleReset}>
+              Reset
+            </Button>
+            <Button onClick={handleSave} disabled={!canSave || saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        }
+      />
 
       {saved && (
-        <Card className="border-green-200 bg-green-50">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2 text-green-800">
-              <Gear className="h-4 w-4" />
-              <span className="text-sm">Settings saved successfully!</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-2 text-sm">
+          <Gear className="h-4 w-4" />
+          <span>Settings saved</span>
+        </div>
       )}
 
-      {/* General Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Globe className="h-5 w-5" />
-            <span>General Settings</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="siteName">Site Name</Label>
-              <Input
-                id="siteName"
-                value={settings.siteName}
-                onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="siteUrl">Site URL</Label>
-              <Input
-                id="siteUrl"
-                value={settings.siteUrl}
-                onChange={(e) => setSettings({ ...settings, siteUrl: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="adminEmail">Admin Email</Label>
-              <Input
-                id="adminEmail"
-                type="email"
-                value={settings.adminEmail}
-                onChange={(e) => setSettings({ ...settings, adminEmail: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="supportEmail">Support Email</Label>
-              <Input
-                id="supportEmail"
-                type="email"
-                value={settings.supportEmail}
-                onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="currency">Currency</Label>
-              <Select value={settings.currency} onValueChange={(value) => setSettings({ ...settings, currency: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD - US Dollar</SelectItem>
-                  <SelectItem value="EUR">EUR - Euro</SelectItem>
-                  <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                  <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="timezone">Timezone</Label>
-              <Select value={settings.timezone} onValueChange={(value) => setSettings({ ...settings, timezone: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select timezone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="America/Denver">Mountain Time (Denver)</SelectItem>
-                  <SelectItem value="America/New_York">Eastern Time (New York)</SelectItem>
-                  <SelectItem value="America/Chicago">Central Time (Chicago)</SelectItem>
-                  <SelectItem value="America/Los_Angeles">Pacific Time (Los Angeles)</SelectItem>
-                  <SelectItem value="Europe/London">GMT (London)</SelectItem>
-                  <SelectItem value="Europe/Paris">CET (Paris)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-[220px_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sections</CardTitle>
+            <CardDescription>Configure the system</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button
+              variant={active === 'general' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActive('general')}
+            >
+              General
+            </Button>
+            <Button
+              variant={active === 'event' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActive('event')}
+            >
+              Event
+            </Button>
+            <Button
+              variant={active === 'payment' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActive('payment')}
+            >
+              Payment
+            </Button>
+            <Button
+              variant={active === 'admin' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActive('admin')}
+            >
+              Admin
+            </Button>
+            <Button
+              variant={active === 'seo' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActive('seo')}
+            >
+              SEO
+            </Button>
+          </CardContent>
+        </Card>
 
-      {/* Notification Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Bell className="h-5 w-5" />
-            <span>Notifications</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">Receive important updates via email</p>
-            </div>
-            <Switch
-              checked={settings.emailNotifications}
-              onCheckedChange={(checked) => setSettings({ ...settings, emailNotifications: checked })}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Push Notifications</p>
-              <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
-            </div>
-            <Switch
-              checked={settings.pushNotifications}
-              onCheckedChange={(checked) => setSettings({ ...settings, pushNotifications: checked })}
-            />
-          </div>
-        </CardContent>
-      </Card>
+        <div className="space-y-4">
+          {active === 'general' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>General Settings</CardTitle>
+                <CardDescription>Site name, branding, and contact</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="siteName">Site name</Label>
+                  <Input
+                    id="siteName"
+                    value={settings.siteName}
+                    onChange={(e) => updateSettings({ ...settings, siteName: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="siteUrl">Site URL</Label>
+                  <Input
+                    id="siteUrl"
+                    value={settings.siteUrl}
+                    onChange={(e) => updateSettings({ ...settings, siteUrl: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contactEmail">Contact email</Label>
+                  <Input
+                    id="contactEmail"
+                    value={settings.contactEmail}
+                    onChange={(e) => updateSettings({ ...settings, contactEmail: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="supportEmail">Support email</Label>
+                  <Input
+                    id="supportEmail"
+                    value={settings.supportEmail}
+                    onChange={(e) => updateSettings({ ...settings, supportEmail: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="twitter">Twitter</Label>
+                  <Input
+                    id="twitter"
+                    value={settings.social.twitter ?? ''}
+                    onChange={(e) =>
+                      updateSettings({
+                        ...settings,
+                        social: { ...settings.social, twitter: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="instagram">Instagram</Label>
+                  <Input
+                    id="instagram"
+                    value={settings.social.instagram ?? ''}
+                    onChange={(e) =>
+                      updateSettings({
+                        ...settings,
+                        social: { ...settings.social, instagram: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
 
-      {/* Appearance Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Palette className="h-5 w-5" />
-            <span>Appearance</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="theme">Theme</Label>
-            <Select value={settings.theme} onValueChange={(value) => setSettings({ ...settings, theme: value as 'light' | 'dark' | 'system' })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="system">System Default</SelectItem>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="dateFormat">Date Format</Label>
-            <Select value={settings.dateFormat} onValueChange={(value) => setSettings({ ...settings, dateFormat: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select date format" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-                <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+          {active === 'event' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Event Settings</CardTitle>
+                <CardDescription>Defaults for events and registration</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Default currency</Label>
+                  <Select
+                    value={settings.defaultCurrency}
+                    onValueChange={(v) => updateSettings({ ...settings, defaultCurrency: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="regLimit">Registration limit (default)</Label>
+                  <Input
+                    id="regLimit"
+                    type="number"
+                    min={0}
+                    value={settings.registrationLimitDefault}
+                    onChange={(e) =>
+                      updateSettings({
+                        ...settings,
+                        registrationLimitDefault: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="categories">Event categories (comma-separated)</Label>
+                  <Input
+                    id="categories"
+                    value={settings.eventCategories.join(', ')}
+                    onChange={(e) =>
+                      updateSettings({
+                        ...settings,
+                        eventCategories: e.target.value
+                          .split(',')
+                          .map((c) => c.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
 
-      {/* System Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Shield className="h-5 w-5" />
-            <span>System</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Maintenance Mode</p>
-              <p className="text-sm text-muted-foreground">Temporarily disable public access</p>
-            </div>
-            <Switch
-              checked={settings.maintenanceMode}
-              onCheckedChange={(checked) => setSettings({ ...settings, maintenanceMode: checked })}
-            />
-          </div>
-          {settings.maintenanceMode && (
-            <Badge variant="destructive" className="ml-2">
-              Active
-            </Badge>
-          )}
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Analytics Enabled</p>
-              <p className="text-sm text-muted-foreground">Track user behavior and site performance</p>
-            </div>
-            <Switch
-              checked={settings.analyticsEnabled}
-              onCheckedChange={(checked) => setSettings({ ...settings, analyticsEnabled: checked })}
-            />
-          </div>
-        </CardContent>
-      </Card>
+          {active === 'payment' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment Settings</CardTitle>
+                <CardDescription>Stripe configuration and policies</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="stripePk">Stripe publishable key</Label>
+                  <Input
+                    id="stripePk"
+                    value={settings.stripePublishableKey}
+                    onChange={(e) =>
+                      updateSettings({ ...settings, stripePublishableKey: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stripeSk">Stripe secret key</Label>
+                  <Input
+                    id="stripeSk"
+                    value={settings.stripeSecretKey}
+                    onChange={(e) => updateSettings({ ...settings, stripeSecretKey: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Payment mode</Label>
+                  <Select
+                    value={settings.paymentMode}
+                    onValueChange={(v) =>
+                      updateSettings({
+                        ...settings,
+                        paymentMode: v as AdminSettings['paymentMode'],
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="test">Test</SelectItem>
+                      <SelectItem value="live">Live</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="refund">Refund policy</Label>
+                  <Textarea
+                    id="refund"
+                    value={settings.refundPolicy}
+                    onChange={(e) => updateSettings({ ...settings, refundPolicy: e.target.value })}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {active === 'admin' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Admin Settings</CardTitle>
+                <CardDescription>Manage admins, roles & permissions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {settings.admins.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">{a.name}</p>
+                      <p className="text-xs text-muted-foreground">{a.email}</p>
+                    </div>
+                    <Badge variant={a.role === 'Owner' ? 'default' : 'secondary'}>{a.role}</Badge>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {active === 'seo' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO Settings</CardTitle>
+                <CardDescription>Metadata and Open Graph defaults</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="metaTitle">Default meta title</Label>
+                  <Input
+                    id="metaTitle"
+                    value={settings.defaultMetaTitle}
+                    onChange={(e) => updateSettings({ ...settings, defaultMetaTitle: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="metaDesc">Meta description</Label>
+                  <Textarea
+                    id="metaDesc"
+                    value={settings.metaDescription}
+                    onChange={(e) => updateSettings({ ...settings, metaDescription: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="ogImage">Open Graph image URL</Label>
+                  <Input
+                    id="ogImage"
+                    value={settings.openGraphImage}
+                    onChange={(e) => updateSettings({ ...settings, openGraphImage: e.target.value })}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+        </div>
+      </div>
     </div>
   )
 }
