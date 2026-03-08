@@ -263,7 +263,7 @@ export async function createRegistration(params: CreateRegistrationParams): Prom
 
     // Create payment intent if payment is required
     let paymentIntent = null
-    if (price > 0) {
+    if (Number(price) > 0) {
       paymentIntent = await createPaymentIntent({
         amount: Number(price),
         currency: event.data.currency,
