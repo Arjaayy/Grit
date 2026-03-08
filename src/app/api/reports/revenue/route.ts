@@ -34,11 +34,7 @@ export async function GET(request: NextRequest) {
 
     // If detailed report requested, include transaction breakdown
     if (detailed) {
-      const where: any = {
-        registration: {
-          organizationId: orgResponse.data!.id
-        }
-      }
+      const where: any = {}
 
       if (startDate || endDate) {
         where.createdAt = {}
@@ -46,15 +42,20 @@ export async function GET(request: NextRequest) {
         if (endDate) where.createdAt.lte = endDate
       }
 
+      // Build registration where clause
+      const registrationWhere: any = {
+        organizationId: orgResponse.data!.id
+      }
+      
       if (eventId) {
-        where.registration = {
-          ...where.registration,
-          eventId
-        }
+        registrationWhere.eventId = eventId
       }
 
       const transactions = await eventsApiPrisma.transaction.findMany({
-        where,
+        where: {
+          ...where,
+          registration: registrationWhere
+        },
         include: {
           registration: {
             include: {
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
       })
 
       // Calculate monthly breakdown
-      const monthlyBreakdown = transactions.reduce((acc: any, transaction: any) => {
+      const monthlyBreakdown = transactions.reduce((acc: Record<string, any>, transaction: any) => {
         const month = transaction.createdAt.toISOString().slice(0, 7) // YYYY-MM
         if (!acc[month]) {
           acc[month] = {
@@ -110,7 +111,7 @@ export async function GET(request: NextRequest) {
           endDate,
           eventId
         }
-      }
+      } as any
     }
 
     return NextResponse.json({
