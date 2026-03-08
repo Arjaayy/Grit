@@ -9,7 +9,6 @@ import {
   Globe,
   House,
   BuildingOffice,
-  UserGroup,
   Phone
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
