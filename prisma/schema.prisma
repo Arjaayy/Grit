@@ -9,6 +9,261 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model PortfolioProject {
+  id                String    @id @default(cuid())
+  title             String
+  slug              String    @unique
+  description       String
+  clientName        String
+  clientIndustry    String
+  sportCategory     String    // e.g., "football", "basketball", "soccer", "baseball"
+  projectType       String    // e.g., "website-redesign", "new-website", "event-platform"
+  technologies      String[]  // Array of technologies used
+  projectUrl        String?   // Live project URL
+  thumbnailImage    String    // Thumbnail image URL
+  heroImage         String    // Hero image for project detail
+  gallery           String[]  // Array of gallery image URLs
+  startDate         DateTime
+  completionDate    DateTime
+  status            String    @default("completed") // "completed", "in-progress", "planned"
+  featured          Boolean   @default(false)
+  sortOrder         Int       @default(0)
+  
+  // SEO fields
+  metaTitle         String?
+  metaDescription   String?
+  metaKeywords      String[]
+  
+  // Project metrics for case studies
+  metrics           ProjectMetrics?
+  
+  // Content sections
+  challenges        String?
+  solutions         String?
+  results           String?
+  testimonial       String?
+  testimonialAuthor String?
+  testimonialRole   String?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@map("portfolio_projects")
+}
+
+model ProjectMetrics {
+  id                    String    @id @default(cuid())
+  portfolioProjectId    String    @unique
+  
+  // Performance metrics
+  trafficIncrease       String? // e.g., "+45%"
+  conversionRate        String? // e.g., "3.2%"
+  pageLoadSpeed         String? // e.g., "1.2s"
+  mobileScore           String? // e.g., "95/100"
+  
+  // Business metrics
+  clientSatisfaction    String? // e.g., "4.8/5"
+  roi                   String? // e.g., "+250%"
+  timelineMet           Boolean   @default(true)
+  
+  // Project scope metrics
+  pagesCreated          Int?
+  featuresImplemented   Int?
+  customIntegrations    Int?
+  
+  portfolioProject      PortfolioProject @relation(fields: [portfolioProjectId], references: [id], onDelete: Cascade)
+  
+  @@map("project_metrics")
+}
+
+model SportCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  displayName String
+  description String?
+  icon        String? // Icon name or URL
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  
+  @@map("sport_categories")
+}
+
+model ProjectType {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  displayName String
+  description String?
+  icon        String? // Icon name or URL
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  
+  @@map("project_types")
+}
+
+// Event Registration API Models
+model Organization {
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  email             String    @unique
+  phone             String?
+  website           String?
+  logo              String?
+  description       String?
+  sportCategory     String
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String?
+  
+  // API access
+  apiKey            String    @unique @default(cuid())
+  webhookUrl        String?
+  
+  // Billing
+  stripeAccountId   String?   // For revenue sharing
+  billingEmail      String?
+  
+  // Status
+  active            Boolean   @default(true)
+  verified          Boolean   @default(false)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  events            Event[]
+  registrations     Registration[]
+  
+  @@map("organizations")
+}
+
+model Event {
+  id                String    @id @default(cuid())
+  organizationId    String
+  name              String
+  slug              String    @unique
+  description       String?
+  
+  // Event details
+  startDate         DateTime
+  endDate           DateTime
+  location          String?
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String?
+  virtual           Boolean   @default(false)
+  maxParticipants   Int?
+  
+  // Pricing
+  price             Decimal   @default(0)
+  currency          String    @default("USD")
+  earlyBirdPrice    Decimal?
+  earlyBirdDeadline DateTime?
+  
+  // Registration settings
+  registrationStart DateTime
+  registrationEnd   DateTime
+  waitlistEnabled   Boolean   @default(false)
+  requiresApproval  Boolean   @default(false)
+  
+  // Custom fields
+  customFields      Json?     // Array of custom field definitions
+  
+  // Status
+  status            String    @default("draft") // "draft", "published", "cancelled", "completed"
+  publishedAt       DateTime?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  registrations     Registration[]
+  
+  @@map("events")
+}
+
+model Registration {
+  id                String    @id @default(cuid())
+  eventId           String
+  organizationId    String
+  participantId     String    @unique // Email or unique identifier
+  
+  // Participant info
+  firstName         String
+  lastName          String
+  email             String
+  phone             String?
+  dateOfBirth       DateTime?
+  gender            String?
+  
+  // Additional info
+  emergencyContact  Json?     // Emergency contact details
+  medicalInfo       String?   // Medical conditions or notes
+  dietaryRestrictions String?
+  
+  // Custom responses
+  customResponses   Json?     // Responses to custom fields
+  
+  // Payment
+  paymentIntentId   String?   // Stripe payment intent ID
+  amount            Decimal   @default(0)
+  currency          String    @default("USD")
+  paid              Boolean   @default(false)
+  paidAt            DateTime?
+  
+  // Status
+  status            String    @default("pending") // "pending", "confirmed", "waitlisted", "cancelled", "refunded"
+  approvedAt        DateTime?
+  cancelledAt       DateTime?
+  refundAmount      Decimal?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@map("registrations")
+}
+
+model Transaction {
+  id                String    @id @default(cuid())
+  registrationId    String    @unique
+  
+  // Payment details
+  stripePaymentId    String    @unique
+  amount            Decimal
+  currency          String
+  fee               Decimal   // Stripe processing fee
+  netAmount         Decimal   // Amount after fees
+  
+  // Revenue sharing
+  organizationAmount Decimal   // Amount going to organization
+  gritAmount        Decimal   // Grit's commission/royalty
+  royaltyRate       Decimal   @default(0.05) // 5% default royalty
+  
+  // Status
+  status            String    @default("pending") // "pending", "completed", "failed", "refunded", "disputed"
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  completedAt       DateTime?
+  refundedAt        DateTime?
+  
+  @@map("transactions")
 }

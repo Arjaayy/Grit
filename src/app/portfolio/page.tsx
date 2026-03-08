@@ -1,80 +1,16 @@
 import Layout from "@/components/layout/layout";
-import SportsCard from "@/components/ui/sports-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, Trophy, Search } from "lucide-react";
+import { getPortfolioProjects, getSportCategories, getProjectTypes, type PortfolioFilter } from "@/lib/portfolio";
+import PortfolioFilterComponent from "@/components/portfolio/portfolio-filter";
+import PortfolioProjectCard from "@/components/portfolio/portfolio-project-card";
 
-export default function PortfolioPage() {
-  const projects = [
-    {
-      title: "Denver United Soccer Club",
-      description: "Complete website redesign with integrated player registration, schedule management, and fan engagement features.",
-      category: "Website Development",
-      stats: [
-        { label: "Page Load Speed", value: "1.2s" },
-        { label: "User Engagement", value: "+250%" }
-      ],
-      image: "/portfolio/denver-united.jpg",
-      link: "/portfolio/denver-united"
-    },
-    {
-      title: "Mountain State Basketball Tournament",
-      description: "Custom event registration system handling 5,000+ registrations with automated payment processing and team management.",
-      category: "Event Registration",
-      stats: [
-        { label: "Registrations", value: "5,000+" },
-        { label: "Processing Time", value: "<30s" }
-      ],
-      image: "/portfolio/basketball-tournament.jpg",
-      link: "/portfolio/basketball-tournament"
-    },
-    {
-      title: "Colorado Youth Hockey League",
-      description: "Multi-organization platform serving 20+ teams with unified scheduling, registration, and communication tools.",
-      category: "Platform Development",
-      stats: [
-        { label: "Teams Served", value: "20+" },
-        { label: "Monthly Users", value: "10,000+" }
-      ],
-      image: "/portfolio/hockey-league.jpg",
-      link: "/portfolio/hockey-league"
-    },
-    {
-      title: "Rocky Mountain Marathon",
-      description: "End-to-end race management system with registration, timing integration, and real-time results display.",
-      category: "Event Management",
-      stats: [
-        { label: "Participants", value: "3,000+" },
-        { label: "Revenue Generated", value: "$450K" }
-      ],
-      image: "/portfolio/marathon.jpg",
-      link: "/portfolio/marathon"
-    },
-    {
-      title: "Frontier Football Academy",
-      description: "Mobile-first website with training program registration, coach communication, and performance tracking.",
-      category: "Mobile Development",
-      stats: [
-        { label: "Mobile Traffic", value: "75%" },
-        { label: "Conversion Rate", value: "12%" }
-      ],
-      image: "/portfolio/football-academy.jpg",
-      link: "/portfolio/football-academy"
-    },
-    {
-      title: "Summit Volleyball Series",
-      description: "Tournament management platform with live scoring, bracket updates, and spectator engagement features.",
-      category: "Tournament Platform",
-      stats: [
-        { label: "Tournaments", value: "15+" },
-        { label: "Live Spectators", value: "50,000+" }
-      ],
-      image: "/portfolio/volleyball-series.jpg",
-      link: "/portfolio/volleyball-series"
-    }
-  ];
-
-  const categories = ["All", "Website Development", "Event Registration", "Platform Development", "Event Management", "Mobile Development", "Tournament Platform"];
+export default async function PortfolioPage() {
+  // Fetch initial data
+  const projects = await getPortfolioProjects();
+  const sportCategories = await getSportCategories();
+  const projectTypes = await getProjectTypes();
 
   return (
     <Layout>
@@ -101,44 +37,37 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* Category Filter */}
+      {/* Filter Section */}
       <section className="py-8 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap gap-3 justify-center">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={category === "All" ? "default" : "outline"}
-                className={category === "All" ? "btn-primary" : "btn-outline"}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
+          <PortfolioFilterComponent
+            onFilterChange={async (filter: PortfolioFilter) => {
+              'use server'
+              console.log('Filter applied:', filter)
+              // In a real implementation, this would update the displayed projects
+            }}
+            sportCategories={sportCategories}
+            projectTypes={projectTypes}
+          />
         </div>
       </section>
 
       {/* Projects Grid */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <SportsCard
-                key={index}
-                title={project.title}
-                description={project.description}
-                category={project.category}
-                stats={project.stats}
-              >
-                <div className="pt-4">
-                  <Button className="btn-primary w-full">
-                    View Case Study
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
-              </SportsCard>
-            ))}
-          </div>
+          {projects.length === 0 ? (
+            <div className="text-center py-12">
+              <Search className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">No projects found</h3>
+              <p className="text-slate-600">Try adjusting your filters or search terms.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.map((project) => (
+                <PortfolioProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -156,7 +85,7 @@ export default function PortfolioPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: "50+", label: "Projects Completed" },
+              { value: `${projects.length}+`, label: "Projects Completed" },
               { value: "100K+", label: "Users Served" },
               { value: "98%", label: "Client Satisfaction" },
               { value: "$2M+", label: "Revenue Generated" }
