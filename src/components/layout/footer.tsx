@@ -1,13 +1,5 @@
 import Link from "next/link";
-import {
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -52,9 +44,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-slate-700 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">G</span>
               </div>
-              <span className="font-bold text-xl">
-                Grit Digital Performance
-              </span>
+              <span className="font-bold text-xl">Grit Digital Performance</span>
             </div>
 
             <p className="text-slate-300 mb-6 leading-relaxed">
