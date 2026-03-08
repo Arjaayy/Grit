@@ -29,7 +29,7 @@ export async function GET(
         data = {
           ...orgResponse.data,
           revenue: revenueResponse.data
-        }
+        } as typeof orgResponse.data & { revenue: typeof revenueResponse.data }
       }
     }
 
