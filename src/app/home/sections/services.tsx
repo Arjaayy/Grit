@@ -75,7 +75,7 @@ export default function Services() {
         .sv-item-num {
           font-family:'Barlow Condensed',sans-serif;
           font-weight:900;font-style:italic;
-          font-size:.72rem;
+          font-size:1rem;
           color:rgba(0,0,0,.2);
           transition:color .18s;
           margin-bottom:6px;
@@ -86,7 +86,7 @@ export default function Services() {
           font-family:'Barlow Condensed',sans-serif;
           font-weight:800;text-transform:uppercase;
           letter-spacing:.05em;
-          font-size:1.15rem;
+          font-size:1.30rem;
           color:#94a3b8;
           line-height:1.1;
           transition:color .18s;
@@ -97,7 +97,7 @@ export default function Services() {
         .sv-item-cat {
           font-family:'Barlow Condensed',sans-serif;
           font-weight:600;text-transform:uppercase;
-          font-size:.6rem;letter-spacing:.14em;
+          font-size:1rem;letter-spacing:.14em;
           color:transparent;
           transition:color .18s;
           margin-top:4px;
@@ -215,8 +215,9 @@ export default function Services() {
               Services That
               <br />
               <span
+                className="italic"
                 style={{
-                  WebkitTextStroke: "2.5px #0f1623",
+                  WebkitTextStroke: "2.5px #e8192c",
                   color: "transparent",
                 }}
               >

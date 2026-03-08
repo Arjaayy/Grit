@@ -95,7 +95,7 @@ const Stats = ({ stats = defaultStats, className }: SportsStatsProps) => {
 
         .ss-value {
           font-family:'Barlow Condensed',sans-serif;
-          font-weight:900;font-style:italic;
+          font-style:italic;
           text-transform:uppercase;
           color:#0f1623;
           line-height:1;
