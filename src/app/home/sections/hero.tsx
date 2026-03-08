@@ -8,28 +8,28 @@ const stats = [
     icon: Trophy,
     value: "50+",
     label: "Sports Orgs",
-    bg: "#e8192c",
+    bg: "rgba(232,25,44,.85)",
     iconColor: "#fff",
   },
   {
     icon: Users,
     value: "100K+",
     label: "Registrations",
-    bg: "#161e2e",
+    bg: "rgba(22,30,46,.9)",
     iconColor: "#e8192c",
   },
   {
     icon: TrendingUp,
     value: "300%",
     label: "Avg Growth",
-    bg: "#1a0a0d",
+    bg: "rgba(26,10,13,.9)",
     iconColor: "#e8192c",
   },
   {
     icon: Zap,
     value: "$2M+",
     label: "Revenue Generated",
-    bg: "#0d1520",
+    bg: "rgba(13,21,32,.9)",
     iconColor: "#e8192c",
   },
 ];
@@ -69,22 +69,14 @@ export default function Hero() {
         .h-ar{animation:h-right .7s cubic-bezier(.22,1,.36,1) both;}
         .h-d1{animation-delay:.05s;} .h-d2{animation-delay:.15s;}
         .h-d3{animation-delay:.28s;} .h-d4{animation-delay:.42s;}
-        .h-d5{animation-delay:.56s;}
+        .h-d5{animation-delay:.56s;} .h-d6{animation-delay:.8s;}
 
         .h-ticker{animation:h-ticker 26s linear infinite;white-space:nowrap;}
 
         .h-noise{
           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          opacity:.03;mix-blend-mode:overlay;pointer-events:none;
+          opacity:.04;mix-blend-mode:overlay;pointer-events:none;
         }
-
-        .h-slab{
-          position:absolute;top:0;right:0;width:52%;height:100%;
-          background:#161e2e;
-          clip-path:polygon(10% 0%,100% 0%,100% 100%,0% 100%);
-          display:none;
-        }
-        @media(min-width:1280px){ .h-slab{ display:block; } }
 
         .h-btn-red{
           font-family:'Barlow Condensed',sans-serif;font-weight:700;
@@ -99,31 +91,26 @@ export default function Hero() {
 
         .h-btn-ghost{
           font-family:'Barlow Condensed',sans-serif;font-weight:700;
-          text-transform:uppercase;letter-spacing:.09em;color:#94a3b8;
-          border:1.5px solid rgba(255,255,255,.18);
+          text-transform:uppercase;letter-spacing:.09em;color:#fff;
+          border:1.5px solid rgba(255,255,255,.35);
           clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,11px 100%,0 calc(100% - 11px));
           transition:border-color .18s,background .18s,color .18s;
           display:inline-flex;align-items:center;justify-content:center;gap:8px;
           padding:13px 28px;font-size:1rem;white-space:nowrap;
         }
-        .h-btn-ghost:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.05);color:#fff;}
+        .h-btn-ghost:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.08);color:#fff;}
 
         .h-stat{
-          border:1px solid rgba(255,255,255,.07);
+          border:1px solid rgba(255,255,255,.12);
           clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
           transition:transform .2s,border-color .2s;
-          padding:1.5rem 1.4rem;
+          padding:1.4rem 1.3rem;
           display:flex;flex-direction:column;gap:.6rem;
+          backdrop-filter:blur(8px);
         }
-        .h-stat:hover{transform:translateY(-4px);border-color:rgba(232,25,44,.5);}
+        .h-stat:hover{transform:translateY(-4px);border-color:rgba(232,25,44,.6);}
 
         .h-outline{-webkit-text-stroke:3px #fff;color:transparent;}
-
-        .h-ghost{
-          font-family:'Barlow Condensed',sans-serif;font-weight:900;font-style:italic;
-          -webkit-text-stroke:1px rgba(232,25,44,.07);color:transparent;
-          user-select:none;pointer-events:none;line-height:1;white-space:nowrap;
-        }
 
         .h-tag{
           font-family:'Barlow Condensed',sans-serif;font-weight:700;
@@ -134,40 +121,72 @@ export default function Hero() {
           font-family:'Barlow Condensed',sans-serif;
           font-weight:900;font-style:italic;text-transform:uppercase;
           color:#fff;line-height:.92;
-          font-size:clamp(2.8rem, 5.2vw, 6.4rem);
+          font-size:clamp(2.8rem,5.2vw,6.4rem);
+          text-shadow:0 2px 24px rgba(0,0,0,.5);
+        }
+
+        /* Video bg */
+        .h-video{
+          position:absolute;inset:0;width:100%;height:100%;
+          object-fit:cover;object-position:center;
+          z-index:0;
+        }
+
+        /* Layered overlays for readability */
+        .h-overlay-base{
+          position:absolute;inset:0;z-index:1;
+          background:rgba(10,14,22,.65);
+        }
+        .h-overlay-grad{
+          position:absolute;inset:0;z-index:2;
+          background:linear-gradient(
+            105deg,
+            rgba(10,14,22,.85) 0%,
+            rgba(10,14,22,.6) 45%,
+            rgba(10,14,22,.3) 100%
+          );
+        }
+        /* Bottom fade so ticker blends in */
+        .h-overlay-bottom{
+          position:absolute;bottom:0;left:0;right:0;height:160px;z-index:2;
+          background:linear-gradient(to bottom,transparent,rgba(10,14,22,.9));
+        }
+
+        /* Grid lines */
+        .h-grid{
+          position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.02;
+          background-image:linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px);
+          background-size:80px 80px;
         }
       `}</style>
 
       <section className="h-root relative overflow-hidden min-h-screen flex flex-col">
-        <div className="h-noise absolute inset-0 z-0" />
-        <div className="h-slab z-0" />
+        {/* ── VIDEO BACKGROUND ── */}
+        <video
+          className="h-video"
+          src="/video/hero_video_bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+
+        {/* Overlays */}
+        <div className="h-overlay-base" />
+        <div className="h-overlay-grad" />
+        <div className="h-overlay-bottom" />
+        <div className="h-grid" />
+        <div className="h-noise absolute inset-0 z-4 pointer-events-none" />
+
+        {/* Top red bar */}
         <div
           className="absolute top-0 left-0 right-0 h-0.75 z-20"
           style={{ background: "#e8192c" }}
         />
 
-        {/* Grid lines */}
+        {/* Stat cards — absolutely positioned bottom-right on xl */}
         <div
-          className="absolute inset-0 pointer-events-none z-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-
-        {/* Ghost GRIT */}
-        <div
-          className="h-ghost absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 hidden xl:block"
-          style={{ fontSize: "15vw" }}
-          aria-hidden="true"
-        >
-          GRIT
-        </div>
-
-        {/* Stat cards */}
-        <div
-          className={`hidden xl:grid grid-cols-2 gap-4 absolute bottom-16 right-12 z-10 w-[42%] ${mounted ? "h-ar h-d5" : "opacity-0"}`}
+          className={`hidden xl:grid grid-cols-2 gap-4 absolute bottom-20 right-12 z-20 w-[40%] ${mounted ? "h-ar h-d6" : "opacity-0"}`}
         >
           {stats.map(({ icon: Icon, value, label, bg, iconColor }, i) => (
             <div key={i} className="h-stat" style={{ background: bg }}>
@@ -183,7 +202,7 @@ export default function Hero() {
               </div>
               <div
                 className="h-tag"
-                style={{ color: "rgba(255,255,255,.45)", fontSize: ".62rem" }}
+                style={{ color: "rgba(255,255,255,.5)", fontSize: ".62rem" }}
               >
                 {label}
               </div>
@@ -191,11 +210,11 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Main content */}
+        {/* ── MAIN CONTENT ── */}
         <div className="relative z-10 flex-1 flex items-center">
           <div className="max-w-7xl mx-auto w-full px-5 sm:px-8 lg:px-12 py-12 xl:py-0">
-            {/* Left column */}
             <div className="max-w-2xl space-y-5 xl:space-y-6">
+              {/* Tag */}
               <div
                 className={`flex items-center gap-3 ${mounted ? "h-au h-d1" : "opacity-0"}`}
               >
@@ -208,6 +227,7 @@ export default function Hero() {
                 </span>
               </div>
 
+              {/* Headline */}
               <div className={`${mounted ? "h-al h-d2" : "opacity-0"}`}>
                 <h1 className="h-headline">
                   <span className="block">Built for</span>
@@ -221,9 +241,13 @@ export default function Hero() {
                 </h1>
               </div>
 
+              {/* Body */}
               <p
-                className={`text-slate-400 leading-relaxed max-w-lg ${mounted ? "h-au h-d3" : "opacity-0"}`}
-                style={{ fontSize: "clamp(.9rem,1.3vw,1.05rem)" }}
+                className={`text-slate-300 leading-relaxed max-w-lg ${mounted ? "h-au h-d3" : "opacity-0"}`}
+                style={{
+                  fontSize: "clamp(.9rem,1.3vw,1.05rem)",
+                  textShadow: "0 1px 8px rgba(0,0,0,.5)",
+                }}
               >
                 We build high-performance websites and registration systems for{" "}
                 <span className="text-white font-semibold">
@@ -232,6 +256,7 @@ export default function Hero() {
                 across the USA — so you can focus on the game.
               </p>
 
+              {/* CTAs */}
               <div
                 className={`flex flex-col sm:flex-row gap-3 ${mounted ? "h-au h-d4" : "opacity-0"}`}
               >
@@ -241,6 +266,7 @@ export default function Hero() {
                 <button className="h-btn-ghost">View Our Work</button>
               </div>
 
+              {/* Social proof */}
               <div
                 className={`flex items-center gap-3 flex-wrap ${mounted ? "h-au h-d5" : "opacity-0"}`}
               >
@@ -255,7 +281,10 @@ export default function Hero() {
                     </div>
                   ))}
                 </div>
-                <p className="text-slate-500 text-sm">
+                <p
+                  className="text-slate-400 text-sm"
+                  style={{ textShadow: "0 1px 6px rgba(0,0,0,.5)" }}
+                >
                   Trusted by{" "}
                   <span className="text-white font-semibold">
                     50+ organizations
@@ -299,7 +328,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Ticker */}
+        {/* ── TICKER ── */}
         <div
           className="relative z-20 py-3 overflow-hidden border-t shrink-0"
           style={{ background: "#e8192c", borderColor: "rgba(255,255,255,.1)" }}

@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -41,10 +49,11 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-slate-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">G</span>
-              </div>
-              <span className="font-bold text-xl">Grit Digital Performance</span>
+              <img
+                className="w-[85] h-auto"
+                src="/logo/gritLogo2.webp"
+                alt="Grit Digital Performance"
+              />
             </div>
 
             <p className="text-slate-300 mb-6 leading-relaxed">
@@ -54,17 +63,19 @@ const Footer = () => {
             </p>
 
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-slate-300">
+              <div className="flex items-center space-x-3 text-slate-300 ">
                 <Mail className="w-5 h-5 text-red-500" />
-                <span>info@gritdigitalperformance.com</span>
+                <p className="uppercase bold font-bold">
+                  info@gritdigitalperformance.com
+                </p>
               </div>
               <div className="flex items-center space-x-3 text-slate-300">
                 <Phone className="w-5 h-5 text-red-500" />
-                <span>+1 (555) 123-4567</span>
+                <p className="uppercase bold font-bold">+1 (555) 123-4567</p>
               </div>
               <div className="flex items-center space-x-3 text-slate-300">
                 <MapPin className="w-5 h-5 text-red-500" />
-                <span>Denver, CO</span>
+                <p className="uppercase bold font-bold">Denver, CO</p>
               </div>
             </div>
 
@@ -88,14 +99,11 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Services</h3>
+            <h3 className="font-semibold text-lg mb-4 uppercase">Services</h3>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 hover:text-red-500 transition-colors"
-                  >
+                  <Link href={link.href} className="text-slate-300 uppercase">
                     {link.name}
                   </Link>
                 </li>
@@ -105,14 +113,11 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Company</h3>
+            <h3 className="font-semibold text-lg mb-4 uppercase">Company</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 hover:text-red-500 transition-colors"
-                  >
+                  <Link href={link.href} className="text-slate-300 uppercase">
                     {link.name}
                   </Link>
                 </li>
@@ -122,14 +127,11 @@ const Footer = () => {
 
           {/* Support */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Support</h3>
+            <h3 className="font-semibold text-lg mb-4 uppercase">Support</h3>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 hover:text-red-500 transition-colors"
-                  >
+                  <Link href={link.href} className="text-slate-300 uppercase">
                     {link.name}
                   </Link>
                 </li>
@@ -142,14 +144,18 @@ const Footer = () => {
         <div className="border-t border-slate-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-slate-400 text-sm">
-              © {currentYear} Grit Digital Performance. All rights reserved.
+              <p className="font-bold uppercase">
+                © {currentYear} Grit Digital Performance. All rights reserved.
+              </p>
             </div>
 
             <div className="flex items-center space-x-6 text-sm text-slate-400">
-              <span>Specializing in Sports Organization Digital Solutions</span>
+              <p className="font-bold uppercase">
+                Specializing in Sports Organization Digital Solutions
+              </p>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span>Always On</span>
+                <p className="font-bold uppercase">Always On</p>
               </div>
             </div>
           </div>
