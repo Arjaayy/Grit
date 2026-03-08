@@ -17,14 +17,16 @@ export default function DashboardMetricCard({
   footer,
 }: DashboardMetricCardProps) {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon ? <div className="text-muted-foreground">{icon}</div> : null}
+        <CardTitle className="text-sm font-medium leading-tight">{title}</CardTitle>
+        {icon ? <div className="text-muted-foreground shrink-0">{icon}</div> : null}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {footer ? <div className="text-xs text-muted-foreground">{footer}</div> : null}
+      <CardContent className="pb-4">
+        <div className="text-2xl font-bold wrap-break-word">{value}</div>
+        {footer ? (
+          <div className="text-xs text-muted-foreground mt-1 leading-tight">{footer}</div>
+        ) : null}
       </CardContent>
     </Card>
   )

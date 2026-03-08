@@ -89,9 +89,9 @@ export default function AdminSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="p-0">
+            <SidebarMenuButton size="lg" asChild className="p-0" aria-label="Grit Digital Performance - Go to dashboard">
               <Link href="/admin">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground" aria-hidden="true">
                   <Image 
                     src="/logo/gritLogo2.webp" 
                     alt="Grit Digital Performance" 
@@ -111,12 +111,17 @@ export default function AdminSidebar() {
       </SidebarHeader>
       
       <SidebarContent>
-        <SidebarMenu>
+        <SidebarMenu role="navigation" aria-label="Admin navigation">
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={pathname === item.url}>
+              <SidebarMenuButton 
+                asChild 
+                isActive={pathname === item.url}
+                aria-label={item.title}
+                aria-current={pathname === item.url ? 'page' : undefined}
+              >
                 <Link href={item.url}>
-                  <item.icon />
+                  <item.icon aria-hidden="true" />
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
@@ -133,8 +138,10 @@ export default function AdminSidebar() {
                 <SidebarMenuButton
                   size="sm"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  aria-label={`User menu - ${session?.user?.name || 'Admin User'}`}
+                  aria-expanded="false"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
+                  <Avatar className="h-8 w-8 rounded-lg" aria-hidden="true">
                     <AvatarFallback className="rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                       {session?.user?.name?.charAt(0).toUpperCase() || 'A'}
                     </AvatarFallback>
@@ -147,7 +154,7 @@ export default function AdminSidebar() {
                       {session?.user?.email || 'admin@gritdigital.com'}
                     </span>
                   </div>
-                  <SignOut className="ml-auto size-4" />
+                  <SignOut className="ml-auto size-4" aria-hidden="true" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -156,8 +163,11 @@ export default function AdminSidebar() {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <SignOut className="mr-2 h-4 w-4" />
+                <DropdownMenuItem 
+                  onClick={handleSignOut}
+                  aria-label="Sign out of admin panel"
+                >
+                  <SignOut className="mr-2 h-4 w-4" aria-hidden="true" />
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>

@@ -63,10 +63,11 @@ export default function OrganizationsManagement() {
         title="Organizations"
         description="Manage sports organizations / clients"
         actions={
-          <Button asChild>
+          <Button asChild size="sm">
             <Link href="/admin/organizations/new">
               <Plus className="h-4 w-4 mr-2" />
-              Add Organization
+              <span className="hidden sm:inline">Add Organization</span>
+              <span className="sm:hidden">New</span>
             </Link>
           </Button>
         }
@@ -75,7 +76,7 @@ export default function OrganizationsManagement() {
       {/* Search + Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -116,55 +117,75 @@ export default function OrganizationsManagement() {
       {/* Organizations Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Organization Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Contact Person</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead className="text-right">Total Events Hosted</TableHead>
-                <TableHead className="text-right">Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOrganizations.map((org) => (
-                <TableRow key={org.id}>
-                  <TableCell className="font-medium">{org.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{org.type}</Badge>
-                  </TableCell>
-                  <TableCell>{org.contactPerson}</TableCell>
-                  <TableCell>{org.email}</TableCell>
-                  <TableCell>{org.phone}</TableCell>
-                  <TableCell className="text-right">{org.totalEventsHosted}</TableCell>
-                  <TableCell className="text-right">{formatDateShort(org.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-2">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/organizations/${org.id}`}>View</Link>
-                      </Button>
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/organizations/${org.id}/edit`}>Edit</Link>
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => {
-                          deleteAdminOrganization(org.id)
-                          setOrganizations(getAdminOrganizations())
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">Organization Name</TableHead>
+                  <TableHead className="min-w-[80px] hidden sm:table-cell">Type</TableHead>
+                  <TableHead className="min-w-[120px] hidden md:table-cell">Contact Person</TableHead>
+                  <TableHead className="min-w-[120px] hidden lg:table-cell">Email</TableHead>
+                  <TableHead className="min-w-[100px] hidden xl:table-cell">Phone</TableHead>
+                  <TableHead className="min-w-[80px] text-right hidden sm:table-cell">Events</TableHead>
+                  <TableHead className="min-w-[80px] text-right hidden lg:table-cell">Created</TableHead>
+                  <TableHead className="min-w-[120px] text-right">Actions</TableHead>
                 </TableRow>
-              ))}
+              </TableHeader>
+              <TableBody>
+                {filteredOrganizations.map((org) => (
+                  <TableRow key={org.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-medium">{org.name}</div>
+                        <div className="text-xs text-muted-foreground sm:hidden">
+                          <Badge variant="outline" className="text-xs mr-2">{org.type}</Badge>
+                          {org.contactPerson}
+                        </div>
+                        <div className="text-xs text-muted-foreground md:hidden lg:hidden">
+                          {org.email}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <Badge variant="outline" className="text-xs">{org.type}</Badge>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{org.contactPerson}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{org.email}</TableCell>
+                    <TableCell className="hidden xl:table-cell">{org.phone}</TableCell>
+                    <TableCell className="text-right hidden sm:table-cell">{org.totalEventsHosted}</TableCell>
+                    <TableCell className="text-right hidden lg:table-cell">{formatDateShort(org.createdAt)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex flex-col sm:flex-row sm:inline-flex items-center gap-1 sm:gap-2">
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={`/admin/organizations/${org.id}`}>
+                            <span className="hidden sm:inline">View</span>
+                            <span className="sm:hidden">V</span>
+                          </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={`/admin/organizations/${org.id}/edit`}>
+                            <span className="hidden sm:inline">Edit</span>
+                            <span className="sm:hidden">E</span>
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            deleteAdminOrganization(org.id)
+                            setOrganizations(getAdminOrganizations())
+                          }}
+                        >
+                          <span className="hidden sm:inline">Delete</span>
+                          <span className="sm:hidden">D</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          </div>
 
           {filteredOrganizations.length === 0 && (
             <div className="text-center py-12">
@@ -172,17 +193,18 @@ export default function OrganizationsManagement() {
                 <BuildingOffice className="h-12 w-12 mx-auto" />
               </div>
               <h3 className="text-lg font-medium mb-2">No organizations found</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-4 text-sm">
                 {searchTerm 
                   ? 'Try adjusting your search terms'
                   : 'Get started by adding your first organization'
                 }
               </p>
               {!searchTerm && (
-                <Button asChild>
+                <Button asChild size="sm">
                   <Link href="/admin/organizations/new">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Organization
+                    <span className="hidden sm:inline">Add Your First Organization</span>
+                    <span className="sm:hidden">Add Organization</span>
                   </Link>
                 </Button>
               )}

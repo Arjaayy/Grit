@@ -20,16 +20,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import LoadingSpinner from '@/components/ui/loading-spinner'
+import { LoadingState } from '@/components/admin/loading-states'
 import AdminPageHeader from '@/components/admin/admin-page-header'
 import DashboardMetricCard from '@/components/admin/dashboard-metric-card'
 import DashboardOverviewChart from '@/components/admin/dashboard-overview-chart'
 import DashboardActivityFeed from '@/components/admin/dashboard-activity-feed'
+import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation'
 import { mockEvents, mockOrganizations } from '@/lib/admin-mock-data'
 import { formatCurrency } from '@/lib/admin-utils'
 
 export default function AdminDashboard() {
   const { loading, authenticated } = useRequireAuth()
+
+  // Keyboard navigation shortcuts
+  useKeyboardNavigation([
+    {
+      key: 'n',
+      ctrlKey: true,
+      metaKey: true,
+      action: () => window.location.href = '/admin/events/new',
+      description: 'Create new event'
+    },
+    {
+      key: 'p',
+      ctrlKey: true,
+      metaKey: true,
+      action: () => window.location.href = '/admin/portfolio/new',
+      description: 'Add portfolio project'
+    },
+    {
+      key: 'o',
+      ctrlKey: true,
+      metaKey: true,
+      action: () => window.location.href = '/admin/organizations/new',
+      description: 'Add organization'
+    },
+    {
+      key: 'a',
+      ctrlKey: true,
+      metaKey: true,
+      action: () => window.location.href = '/admin/analytics',
+      description: 'View analytics'
+    }
+  ])
 
   const totalRevenue = mockEvents.reduce(
     (sum, e) => sum + e.price * e.registrationsCount,
@@ -42,11 +75,7 @@ export default function AdminDashboard() {
   const upcomingEvents = mockEvents.filter((e) => e.registrationStatus === 'Open')
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
+    return <LoadingState type="page" message="Loading dashboard..." />
   }
 
   if (!authenticated) {
@@ -91,9 +120,9 @@ export default function AdminDashboard() {
       <AdminPageHeader
         title="Dashboard"
         actions={
-          <div className="flex items-center gap-2">
-            <Select defaultValue="30d">
-              <SelectTrigger className="w-[160px]">
+          <div className="flex items-center gap-2 flex-wrap" role="toolbar" aria-label="Dashboard actions">
+            <Select defaultValue="30d" aria-label="Select date range">
+              <SelectTrigger className="w-[140px] sm:w-[160px]" aria-label="Date range selector">
                 <SelectValue placeholder="Date range" />
               </SelectTrigger>
               <SelectContent>
@@ -102,23 +131,24 @@ export default function AdminDashboard() {
                 <SelectItem value="90d">Last 90 days</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" />
-              Export
+            <Button variant="outline" size="sm" aria-label="Export dashboard data">
+              <Calendar className="mr-2 h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Export</span>
+              <span className="sm:hidden">Exp</span>
             </Button>
           </div>
         }
       />
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" role="region" aria-label="Dashboard statistics">
         <DashboardMetricCard
           title="Total Events"
           value={mockEvents.length}
-          icon={<Calendar data-icon="inline-end" />}
+          icon={<Calendar data-icon="inline-end" aria-hidden="true" />}
           footer={
             <span>
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs" aria-label="2 more events than last month">
                 +2
               </Badge>{' '}
               from last month
@@ -162,22 +192,24 @@ export default function AdminDashboard() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 lg:grid-cols-7 xl:grid-cols-7">
         {/* Overview Card */}
-        <Card className="col-span-4">
+        <Card className="col-span-4 lg:col-span-4 xl:col-span-4">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-            <DashboardOverviewChart data={overviewData} />
+            <div className="h-[200px] sm:h-[220px]" role="img" aria-label="Bar chart showing monthly registrations">
+              <DashboardOverviewChart data={overviewData} />
+            </div>
           </CardContent>
         </Card>
 
         {/* Activity */}
-        <Card className="col-span-3">
+        <Card className="col-span-3 lg:col-span-3 xl:col-span-3">
           <CardHeader>
-            <CardTitle>Activity</CardTitle>
-            <CardDescription>New registrations and updates</CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Activity</CardTitle>
+            <CardDescription className="text-sm">New registrations and updates</CardDescription>
           </CardHeader>
           <CardContent>
             <DashboardActivityFeed items={activity} />
@@ -191,29 +223,29 @@ export default function AdminDashboard() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="toolbar" aria-label="Quick actions">
+            <Button asChild className="w-full sm:w-auto" aria-label="Add new portfolio project">
               <Link href="/admin/portfolio/new">
-                <Images className="h-4 w-4 mr-2" />
-                Add Portfolio Project
+                <Images className="h-4 w-4 mr-2" aria-hidden="true" />
+                <span className="truncate">Add Portfolio</span>
               </Link>
             </Button>
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="w-full sm:w-auto" aria-label="Create new event">
               <Link href="/admin/events/new">
-                <Calendar className="h-4 w-4 mr-2" />
-                Create Event
+                <Calendar className="h-4 w-4 mr-2" aria-hidden="true" />
+                <span className="truncate">Create Event</span>
               </Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto" aria-label="Add new organization">
               <Link href="/admin/organizations/new">
-                <Users className="h-4 w-4 mr-2" />
-                Add Organization
+                <Users className="h-4 w-4 mr-2" aria-hidden="true" />
+                <span className="truncate">Add Organization</span>
               </Link>
             </Button>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="w-full sm:w-auto" aria-label="View analytics dashboard">
               <Link href="/admin/analytics">
-                <ArrowUpRight className="h-4 w-4 mr-2" />
-                View Analytics
+                <ArrowUpRight className="h-4 w-4 mr-2" aria-hidden="true" />
+                <span className="truncate">View Analytics</span>
               </Link>
             </Button>
           </div>
@@ -226,11 +258,12 @@ export default function AdminDashboard() {
           <CardDescription>Next events with registration open</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
+          <h3 className="font-medium sr-only">Upcoming Events</h3>
           {upcomingEvents.map((e) => (
-            <div key={e.id} className="flex items-center gap-3">
-              <div className="text-sm font-medium">{e.name}</div>
+            <div key={e.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-lg border bg-card" role="article" aria-labelledby={`event-${e.id}-name`}>
+              <div id={`event-${e.id}-name`} className="text-sm font-medium">{e.name}</div>
               <div className="text-xs text-muted-foreground">{e.location}</div>
-              <div className="ml-auto text-sm">{e.registrationsCount} regs</div>
+              <div className="sm:ml-auto text-sm font-semibold" aria-label={`${e.registrationsCount} registrations`}>{e.registrationsCount} regs</div>
             </div>
           ))}
           {upcomingEvents.length === 0 ? (

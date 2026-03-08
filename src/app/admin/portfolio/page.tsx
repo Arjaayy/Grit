@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import LoadingSpinner from '@/components/ui/loading-spinner'
+import { LoadingState } from '@/components/admin/loading-states'
 import {
   Table,
   TableBody,
@@ -114,11 +114,7 @@ export default function PortfolioManagement() {
   const statuses = Array.from(new Set(projects.map(p => p.status)))
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
+    return <LoadingState type="page" message="Loading portfolio projects..." />
   }
 
   return (
@@ -127,10 +123,11 @@ export default function PortfolioManagement() {
         title="Portfolio"
         description="Manage showcase projects for sports organizations"
         actions={
-          <Button asChild>
+          <Button asChild size="sm">
             <Link href="/admin/portfolio/new">
               <Plus className="h-4 w-4 mr-2" />
-              Add Project
+              <span className="hidden sm:inline">Add Project</span>
+              <span className="sm:hidden">New</span>
             </Link>
           </Button>
         }
@@ -142,7 +139,7 @@ export default function PortfolioManagement() {
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -208,143 +205,149 @@ export default function PortfolioManagement() {
       {/* Projects Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>
-                  <button
-                    type="button"
-                    className="inline-flex items-center"
-                    onClick={() => {
-                      setSortKey('title')
-                      setSortDir((d) => (sortKey === 'title' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'))
-                    }}
-                  >
-                    Project Name
-                  </button>
-                </TableHead>
-                <TableHead>
-                  <button
-                    type="button"
-                    className="inline-flex items-center"
-                    onClick={() => {
-                      setSortKey('clientName')
-                      setSortDir((d) =>
-                        sortKey === 'clientName' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
-                      )
-                    }}
-                  >
-                    Organization
-                  </button>
-                </TableHead>
-                <TableHead>
-                  <button
-                    type="button"
-                    className="inline-flex items-center"
-                    onClick={() => {
-                      setSortKey('projectType')
-                      setSortDir((d) =>
-                        sortKey === 'projectType' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
-                      )
-                    }}
-                  >
-                    Category
-                  </button>
-                </TableHead>
-                <TableHead>
-                  <button
-                    type="button"
-                    className="inline-flex items-center"
-                    onClick={() => {
-                      setSortKey('status')
-                      setSortDir((d) =>
-                        sortKey === 'status' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
-                      )
-                    }}
-                  >
-                    Status
-                  </button>
-                </TableHead>
-                <TableHead>
-                  <button
-                    type="button"
-                    className="inline-flex items-center"
-                    onClick={() => {
-                      setSortKey('createdAt')
-                      setSortDir((d) =>
-                        sortKey === 'createdAt' ? (d === 'asc' ? 'desc' : 'asc') : 'desc'
-                      )
-                    }}
-                  >
-                    Created Date
-                  </button>
-                </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProjects.map((project) => (
-                <TableRow key={project.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate">{project.title}</span>
-                      {project.featured ? (
-                        <Badge variant="secondary" className="text-xs">
-                          Featured
-                        </Badge>
-                      ) : null}
-                    </div>
-                  </TableCell>
-                  <TableCell>{project.clientName}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {project.projectType}
-                      </Badge>
-                      <Badge variant="secondary" className="text-xs">
-                        {project.sportCategory}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={project.status === 'completed' ? 'default' : 'secondary'}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">
+                    <button
+                      type="button"
+                      className="inline-flex items-center"
+                      onClick={() => {
+                        setSortKey('title')
+                        setSortDir((d) => (sortKey === 'title' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'))
+                      }}
                     >
-                      {project.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{formatDateShort(project.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-2">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/portfolio/${project.id}`}>
-                          <Eye className="h-3 w-3 mr-1" />
-                          View
-                        </Link>
-                      </Button>
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/admin/portfolio/${project.id}/edit`}>
-                          <Pencil className="h-3 w-3 mr-1" />
-                          Edit
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => {
-                          setProjectToDelete(project.id)
-                          setShowDeleteModal(true)
-                        }}
-                      >
-                        <Trash className="h-3 w-3 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
+                      Project Name
+                    </button>
+                  </TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center"
+                      onClick={() => {
+                        setSortKey('clientName')
+                        setSortDir((d) =>
+                          sortKey === 'clientName' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
+                        )
+                      }}
+                    >
+                      Organization
+                    </button>
+                  </TableHead>
+                  <TableHead className="min-w-[100px] hidden md:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center"
+                      onClick={() => {
+                        setSortKey('projectType')
+                        setSortDir((d) =>
+                          sortKey === 'projectType' ? (d === 'asc' ? 'desc' : 'asc') : 'asc'
+                        )
+                      }}
+                    >
+                      Category
+                    </button>
+                  </TableHead>
+                  <TableHead className="min-w-[80px]">Status</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center"
+                      onClick={() => {
+                        setSortKey('createdAt')
+                        setSortDir((d) =>
+                          sortKey === 'createdAt' ? (d === 'asc' ? 'desc' : 'asc') : 'desc'
+                        )
+                      }}
+                    >
+                      Created Date
+                    </button>
+                  </TableHead>
+                  <TableHead className="min-w-[120px] text-right">Actions</TableHead>
                 </TableRow>
-              ))}
+              </TableHeader>
+              <TableBody>
+                {filteredProjects.map((project) => (
+                  <TableRow key={project.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate font-medium">{project.title}</span>
+                          {project.featured ? (
+                            <Badge variant="secondary" className="text-xs">
+                              Featured
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <div className="text-xs text-muted-foreground sm:hidden">
+                          {project.clientName}
+                        </div>
+                        <div className="flex items-center gap-2 sm:hidden">
+                          <Badge variant="outline" className="text-xs">
+                            {project.projectType}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {project.sportCategory}
+                          </Badge>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{project.clientName}</TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {project.projectType}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {project.sportCategory}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={project.status === 'completed' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {project.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">{formatDateShort(project.createdAt)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex flex-col sm:flex-row sm:inline-flex items-center gap-1 sm:gap-2">
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={`/admin/portfolio/${project.id}`}>
+                            <Eye className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">View</span>
+                            <span className="sm:hidden">V</span>
+                          </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={`/admin/portfolio/${project.id}/edit`}>
+                            <Pencil className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">Edit</span>
+                            <span className="sm:hidden">E</span>
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setProjectToDelete(project.id)
+                            setShowDeleteModal(true)
+                          }}
+                        >
+                          <Trash className="h-3 w-3 mr-1" />
+                          <span className="hidden sm:inline">Delete</span>
+                          <span className="sm:hidden">D</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          </div>
 
           {filteredProjects.length === 0 && (
             <div className="text-center py-12">
@@ -352,17 +355,18 @@ export default function PortfolioManagement() {
                 <Funnel className="h-12 w-12 mx-auto" />
               </div>
               <h3 className="text-lg font-medium mb-2">No projects found</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-4 text-sm">
                 {searchTerm || filterCategory || filterStatus 
                   ? 'Try adjusting your filters or search terms'
                   : 'Get started by creating your first portfolio project'
                 }
               </p>
               {!searchTerm && !filterCategory && !filterStatus && (
-                <Button asChild>
+                <Button asChild size="sm">
                   <Link href="/admin/portfolio/new">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Project
+                    <span className="hidden sm:inline">Add Your First Project</span>
+                    <span className="sm:hidden">Add Project</span>
                   </Link>
                 </Button>
               )}

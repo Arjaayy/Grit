@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import LoadingSpinner from '@/components/ui/loading-spinner'
+import { LoadingState } from '@/components/admin/loading-states'
 import AdminPageHeader from '@/components/admin/admin-page-header'
 import { exportEventsCsv, getAdminEvents } from '@/lib/admin-events-store'
 import { formatCurrency, formatDateShort } from '@/lib/admin-utils'
@@ -44,11 +44,7 @@ export default function EventsPage() {
   const [filterOrg, setFilterOrg] = useState('all')
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
+    return <LoadingState type="page" message="Loading events..." />
   }
 
   if (!authenticated) {
@@ -75,15 +71,17 @@ export default function EventsPage() {
         title="Events"
         description="Manage tournaments and competitions"
         actions={
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => exportEventsCsv(filteredEvents)}>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button variant="outline" onClick={() => exportEventsCsv(filteredEvents)} size="sm">
               <Download className="h-4 w-4 mr-2" />
-              Export CSV
+              <span className="hidden sm:inline">Export CSV</span>
+              <span className="sm:hidden">CSV</span>
             </Button>
-            <Button asChild>
+            <Button asChild size="sm">
               <Link href="/admin/events/new">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Event
+                <span className="hidden sm:inline">Create Event</span>
+                <span className="sm:hidden">New</span>
               </Link>
             </Button>
           </div>
@@ -91,7 +89,7 @@ export default function EventsPage() {
       />
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
             <CardTitle className="text-sm font-medium">Total Events</CardTitle>
@@ -152,7 +150,7 @@ export default function EventsPage() {
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -209,42 +207,52 @@ export default function EventsPage() {
       {/* Events Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Event Name</TableHead>
-                <TableHead>Organization</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Registration Status</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">Registrations</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredEvents.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell className="font-medium">{event.name}</TableCell>
-                  <TableCell>{event.organizationName}</TableCell>
-                  <TableCell>{formatDateShort(event.date)}</TableCell>
-                  <TableCell>{event.location}</TableCell>
-                  <TableCell>
-                    <Badge variant={event.registrationStatus === 'Open' ? 'default' : 'secondary'}>
-                      {event.registrationStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">{formatCurrency(event.price)}</TableCell>
-                  <TableCell className="text-right">{event.registrationsCount}</TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/events/${event.id}`}>View</Link>
-                    </Button>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">Event Name</TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">Organization</TableHead>
+                  <TableHead className="min-w-[100px]">Date</TableHead>
+                  <TableHead className="min-w-[100px] hidden md:table-cell">Location</TableHead>
+                  <TableHead className="min-w-[120px]">Status</TableHead>
+                  <TableHead className="min-w-[80px] text-right hidden sm:table-cell">Price</TableHead>
+                  <TableHead className="min-w-[80px] text-right hidden lg:table-cell">Regs</TableHead>
+                  <TableHead className="min-w-[80px] text-right">Actions</TableHead>
                 </TableRow>
-              ))}
+              </TableHeader>
+              <TableBody>
+                {filteredEvents.map((event) => (
+                  <TableRow key={event.id}>
+                    <TableCell className="font-medium">
+                      <div>
+                        <div className="font-medium">{event.name}</div>
+                        <div className="text-xs text-muted-foreground sm:hidden">{event.organizationName}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{event.organizationName}</TableCell>
+                    <TableCell>{formatDateShort(event.date)}</TableCell>
+                    <TableCell className="hidden md:table-cell">{event.location}</TableCell>
+                    <TableCell>
+                      <Badge variant={event.registrationStatus === 'Open' ? 'default' : 'secondary'} className="text-xs">
+                        {event.registrationStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right hidden sm:table-cell">{formatCurrency(event.price)}</TableCell>
+                    <TableCell className="text-right hidden lg:table-cell">{event.registrationsCount}</TableCell>
+                    <TableCell className="text-right">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/admin/events/${event.id}`}>
+                          <span className="hidden sm:inline">View</span>
+                          <span className="sm:hidden">V</span>
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          </div>
 
           {filteredEvents.length === 0 && (
             <div className="text-center py-12">
@@ -252,17 +260,18 @@ export default function EventsPage() {
                 <Calendar className="h-12 w-12 mx-auto" />
               </div>
               <h3 className="text-lg font-medium mb-2">No events found</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-4 text-sm">
                 {searchTerm || filterOrg !== 'all' || filterStatus !== 'all'
                   ? 'Try adjusting your filters or search terms'
                   : 'Get started by creating your first event'
                 }
               </p>
               {!searchTerm && filterOrg === 'all' && filterStatus === 'all' && (
-                <Button asChild>
+                <Button asChild size="sm">
                   <Link href="/admin/events/new">
                     <Plus className="h-4 w-4 mr-2" />
-                    Create Your First Event
+                    <span className="hidden sm:inline">Create Your First Event</span>
+                    <span className="sm:hidden">Create Event</span>
                   </Link>
                 </Button>
               )}
