@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import GritLogo from "../../app/grit.ico";
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -39,18 +48,22 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-slate-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">G</span>
-              </div>
-              <span className="font-bold text-xl">Grit Digital Performance</span>
+              <img
+                src={GritLogo.src}
+                alt="Grit Logo"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <span className="font-bold text-xl">
+                Grit Digital Performance
+              </span>
             </div>
-            
+
             <p className="text-slate-300 mb-6 leading-relaxed">
-              Empowering sports organizations with cutting-edge digital solutions. 
-              From stunning websites to seamless event registration, we help you connect 
-              with your audience and grow your impact.
+              Empowering sports organizations with cutting-edge digital
+              solutions. From stunning websites to seamless event registration,
+              we help you connect with your audience and grow your impact.
             </p>
-            
+
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-slate-300">
                 <Mail className="w-5 h-5 text-red-500" />
@@ -142,7 +155,7 @@ const Footer = () => {
             <div className="text-slate-400 text-sm">
               © {currentYear} Grit Digital Performance. All rights reserved.
             </div>
-            
+
             <div className="flex items-center space-x-6 text-sm text-slate-400">
               <span>Specializing in Sports Organization Digital Solutions</span>
               <div className="flex items-center space-x-2">

@@ -1,5 +1,5 @@
 "use client";
-
+import GritLogo from "../../app/grit.ico";
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -11,14 +11,14 @@ const Header = () => {
 
   const navigation = [
     { name: "Home", href: "/" },
-    { 
-      name: "Services", 
+    {
+      name: "Services",
       href: "/services",
       dropdown: [
         { name: "Website Development", href: "/services/web-development" },
         { name: "Event Registration", href: "/services/event-registration" },
         { name: "Sports Consulting", href: "/services/consulting" },
-      ]
+      ],
     },
     { name: "Portfolio", href: "/portfolio" },
     { name: "Events", href: "/events" },
@@ -33,10 +33,14 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-slate-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">G</span>
-              </div>
-              <span className="font-bold text-xl text-slate-900">Grit Digital Performance</span>
+              <img
+                src={GritLogo.src}
+                alt="Grit Logo"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <span className="font-bold text-xl text-slate-900">
+                Grit Digital Performance
+              </span>
             </Link>
           </div>
 
@@ -54,9 +58,9 @@ const Header = () => {
                       <span>{item.name}</span>
                       <ChevronDown className="w-4 h-4" />
                     </button>
-                    
+
                     {isServicesOpen && (
-                      <div 
+                      <div
                         className="absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-lg border border-slate-200 py-2"
                         onMouseEnter={() => setIsServicesOpen(true)}
                         onMouseLeave={() => setIsServicesOpen(false)}
@@ -98,7 +102,11 @@ const Header = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-md text-slate-700 hover:text-red-600 hover:bg-slate-50 transition-colors"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -116,9 +124,11 @@ const Header = () => {
                         className="flex items-center justify-between w-full px-3 py-2 text-slate-700 hover:text-red-600 font-medium transition-colors"
                       >
                         <span>{item.name}</span>
-                        <ChevronDown className={`w-4 h-4 transform transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown
+                          className={`w-4 h-4 transform transition-transform ${isServicesOpen ? "rotate-180" : ""}`}
+                        />
                       </button>
-                      
+
                       {isServicesOpen && (
                         <div className="pl-6 pr-3 py-2 space-y-1">
                           {item.dropdown.map((subItem) => (
@@ -145,7 +155,7 @@ const Header = () => {
                   )}
                 </div>
               ))}
-              
+
               <div className="px-3 py-4">
                 <Button asChild className="btn-primary w-full">
                   <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
