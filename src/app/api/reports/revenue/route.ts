@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         if (endDate) where.createdAt.lte = endDate
       }
 
-      // Build registration where clause
+      // First get registrations that match the criteria
       const registrationWhere: any = {
         organizationId: orgResponse.data!.id
       }
@@ -51,36 +51,44 @@ export async function GET(request: NextRequest) {
         registrationWhere.eventId = eventId
       }
 
+      const registrations = await eventsApiPrisma.registration.findMany({
+        where: registrationWhere,
+        include: {
+          event: {
+            select: {
+              id: true,
+              name: true,
+              startDate: true
+            }
+          },
+          participant: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      // Then get transactions for those registrations
+      const registrationIds = registrations.map((reg: any) => reg.id)
       const transactions = await eventsApiPrisma.transaction.findMany({
         where: {
           ...where,
-          registration: registrationWhere
-        },
-        include: {
-          registration: {
-            include: {
-              event: {
-                select: {
-                  id: true,
-                  name: true,
-                  startDate: true
-                }
-              },
-              participant: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  email: true
-                }
-              }
-            }
-          }
+          registrationId: { in: registrationIds }
         },
         orderBy: { createdAt: 'desc' }
       })
 
+      // Combine transactions with registration data
+      const transactionsWithDetails = transactions.map((transaction: any) => ({
+        ...transaction,
+        registration: registrations.find((reg: any) => reg.id === transaction.registrationId)
+      }))
+
       // Calculate monthly breakdown
-      const monthlyBreakdown = transactions.reduce((acc: Record<string, any>, transaction: any) => {
+      const monthlyBreakdown = transactionsWithDetails.reduce((acc: Record<string, any>, transaction: any) => {
         const month = transaction.createdAt.toISOString().slice(0, 7) // YYYY-MM
         if (!acc[month]) {
           acc[month] = {
@@ -104,7 +112,7 @@ export async function GET(request: NextRequest) {
 
       data = {
         ...data,
-        transactions,
+        transactions: transactionsWithDetails,
         monthlyBreakdown: Object.values(monthlyBreakdown),
         filters: {
           startDate,
