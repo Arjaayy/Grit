@@ -8,40 +8,43 @@ export default function Home() {
   const services = [
     {
       title: "Website Development",
-      description: "Custom, high-performance websites built specifically for sports organizations to engage fans and drive growth.",
+      description:
+        "Custom, high-performance websites built specifically for sports organizations to engage fans and drive growth.",
       category: "Web Services",
       stats: [
         { label: "Projects Completed", value: "50+" },
-        { label: "Client Satisfaction", value: "98%" }
-      ]
+        { label: "Client Satisfaction", value: "98%" },
+      ],
     },
     {
       title: "Event Registration",
-      description: "Seamless online registration systems with payment processing that handle everything from sign-ups to check-ins.",
+      description:
+        "Seamless online registration systems with payment processing that handle everything from sign-ups to check-ins.",
       category: "Event Management",
       stats: [
         { label: "Registrations Processed", value: "100K+" },
-        { label: "Revenue Generated", value: "$2M+" }
-      ]
+        { label: "Revenue Generated", value: "$2M+" },
+      ],
     },
     {
       title: "Sports Consulting",
-      description: "Strategic digital consulting to help sports organizations maximize their online presence and fan engagement.",
+      description:
+        "Strategic digital consulting to help sports organizations maximize their online presence and fan engagement.",
       category: "Consulting",
       stats: [
         { label: "Organizations Helped", value: "30+" },
-        { label: "Growth Rate", value: "300%" }
-      ]
-    }
+        { label: "Growth Rate", value: "300%" },
+      ],
+    },
   ];
 
   return (
     <Layout>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-900">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-red-900"></div>
-        
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-red-900/80" />
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Content */}
@@ -49,19 +52,21 @@ export default function Home() {
               <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-600 text-white">
                 Industry Leaders
               </div>
-              
+
               <div className="space-y-4">
                 <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight">
                   Digital Excellence for Sports Organizations
                 </h1>
-                
+
                 <h2 className="text-xl lg:text-2xl text-red-400 font-semibold">
                   We Build Champions Online
                 </h2>
               </div>
 
               <p className="text-xl text-slate-200 leading-relaxed max-w-lg">
-                Transform your sports organization with cutting-edge websites and event registration systems that drive engagement and revenue.
+                Transform your sports organization with cutting-edge websites
+                and event registration systems that drive engagement and
+                revenue.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -70,20 +75,48 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
 
-                <Button variant="outline" className="btn-outline text-lg px-8 py-4">
+                <Button
+                  variant="outline"
+                  className="btn-outline text-lg px-8 py-4"
+                >
                   View Our Work
                 </Button>
               </div>
             </div>
-            {/* test push */}
 
             {/* Visual Element */}
-            <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-red-600 to-slate-800 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+            {/* <div className="relative">
+              <div className="aspect-square bg-gradient-to-br from-red-600/80 to-slate-800/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl flex items-center justify-center border border-white/10">
                 <div className="text-center text-white p-8">
                   <Trophy className="w-16 h-16 mx-auto mb-4 text-red-300" />
-                  <div className="text-2xl font-bold mb-2">Champion Results</div>
-                  <div className="text-slate-300">Trusted by 50+ Sports Organizations</div>
+                  <div className="text-2xl font-bold mb-2">
+                    Champion Results
+                  </div>
+                  <div className="text-slate-300">
+                    Trusted by 50+ Sports Organizations
+                  </div>
+                </div>
+              </div>
+            </div> */}
+
+            <div className="relative">
+              {/* Background Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-xl"
+                style={{ backgroundImage: "url('/duterts.png')" }}
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-black/50 rounded-xl" />
+
+              <div className="aspect-square rounded-xl overflow-hidden shadow-2xl flex items-center justify-center border border-white/10">
+                <div className="text-center text-white p-8 z-10">
+                  <Trophy className="w-16 h-16 mx-auto mb-4 text-red-300" />
+                  <div className="text-2xl font-bold mb-2 drop-shadow-lg">
+                    Champion Results
+                  </div>
+                  <div className="text-slate-200 drop-shadow-md font-medium">
+                    Trusted by 50+ Sports Organizations
+                  </div>
                 </div>
               </div>
             </div>
@@ -102,7 +135,8 @@ export default function Home() {
               Services That Win
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              From website development to event registration, we provide comprehensive digital solutions for sports organizations.
+              From website development to event registration, we provide
+              comprehensive digital solutions for sports organizations.
             </p>
           </div>
 
@@ -136,14 +170,18 @@ export default function Home() {
               Ready to Champion Your Digital Presence?
             </h2>
             <p className="text-xl text-slate-300 mb-8">
-              Join 50+ sports organizations that trust Grit Digital Performance to deliver exceptional digital experiences.
+              Join 50+ sports organizations that trust Grit Digital Performance
+              to deliver exceptional digital experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="btn-primary text-lg px-8 py-4">
                 Start Your Project
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-              <Button variant="outline" className="btn-outline text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-slate-900">
+              <Button
+                variant="outline"
+                className="btn-outline text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-slate-900"
+              >
                 Schedule Consultation
               </Button>
             </div>
