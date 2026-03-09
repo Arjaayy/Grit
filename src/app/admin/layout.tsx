@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { SessionProvider } from 'next-auth/react'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { ThemeProvider } from '@/components/dashboard/theme-provider'
 import AdminSidebar from '@/components/admin/sidebar'
 import { ErrorBoundary } from '@/components/admin/error-boundary'
 import { NotificationProvider } from '@/components/admin/notifications'
@@ -21,7 +22,9 @@ export default function AdminLayout({
   if (isAuthPage) {
     return (
       <SessionProvider>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </SessionProvider>
     )
   }
@@ -29,16 +32,23 @@ export default function AdminLayout({
   return (
     <SessionProvider>
       <NotificationProvider>
-        <SidebarProvider>
-          <AdminSidebar />
-          <SidebarInset>
-            <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-3 sm:pt-4 min-h-0">
-              <ErrorBoundary>
-                {children}
-              </ErrorBoundary>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+        <ThemeProvider>
+          <SidebarProvider
+            style={{
+              "--sidebar-width": "calc(var(--spacing) * 72)",
+              "--header-height": "calc(var(--spacing) * 12)",
+            } as React.CSSProperties}
+          >
+            <AdminSidebar />
+            <SidebarInset>
+              <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-3 sm:pt-4 min-h-0 admin-layout">
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+        </ThemeProvider>
       </NotificationProvider>
     </SessionProvider>
   )

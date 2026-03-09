@@ -13,24 +13,26 @@ import {
   UserCircle,
   CreditCard,
   Gear, 
-  SignOut
+  SignOut,
+  FileText
 } from '@phosphor-icons/react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ThemeToggle } from '@/components/dashboard/theme-toggle'
 
 // Navigation items
 const items = [
@@ -89,20 +91,23 @@ export default function AdminSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="p-0" aria-label="Grit Digital Performance - Go to dashboard">
-              <Link href="/admin">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground" aria-hidden="true">
-                  <Image 
-                    src="/logo/gritLogo2.webp" 
-                    alt="Grit Digital Performance" 
-                    width={24} 
-                    height={24}
-                    className="size-6"
-                  />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Grit Digital</span>
-                  <span className="truncate text-xs">Performance</span>
+            <SidebarMenuButton size="lg" asChild className="w-full" aria-label="Grit Digital Performance - Go to dashboard">
+              <Link href="/admin" className="flex items-center gap-3">
+                <Image
+                  src="/logo/gritLogo2.webp"
+                  alt="Grit Digital Performance"
+                  width={40}
+                  height={40}
+                  className="object-contain shrink-0"
+                />
+                <div className="hidden sm:flex flex-col justify-center">
+                  <div className="flex items-baseline" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, textTransform: 'uppercase', fontSize: '1.25rem', letterSpacing: '0.05em' }}>
+                    <span>Grit</span>
+                    <span className="ml-1" style={{ color: '#e8192c', fontStyle: 'italic' }}>Digital</span>
+                  </div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, textTransform: 'uppercase', fontSize: '0.56rem', letterSpacing: '0.07em' }}>
+                    Performance
+                  </div>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -133,45 +138,30 @@ export default function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="sm"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                  aria-label={`User menu - ${session?.user?.name || 'Admin User'}`}
-                  aria-expanded="false"
-                >
-                  <Avatar className="h-8 w-8 rounded-lg" aria-hidden="true">
-                    <AvatarFallback className="rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                      {session?.user?.name?.charAt(0).toUpperCase() || 'A'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {session?.user?.name || 'Admin User'}
-                    </span>
-                    <span className="truncate text-xs">
-                      {session?.user?.email || 'admin@gritdigital.com'}
-                    </span>
-                  </div>
-                  <SignOut className="ml-auto size-4" aria-hidden="true" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuItem 
-                  onClick={handleSignOut}
-                  aria-label="Sign out of admin panel"
-                >
-                  <SignOut className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center justify-between w-full p-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton size="sm" className="w-full justify-start">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarFallback className="rounded-lg">
+                        {session?.user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">{session?.user?.name || 'Admin User'}</span>
+                      <span className="truncate text-xs">{session?.user?.email || 'admin@example.com'}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-lg" side="bottom" align="end">
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                    <SignOut className="mr-2 h-4 w-4" aria-hidden="true" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <ThemeToggle />
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

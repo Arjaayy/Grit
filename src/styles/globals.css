@@ -29,57 +29,123 @@
     --grit-primary: 15 23 42; /* slate-900 - strong, professional */
     --grit-secondary: 239 68 68; /* red-500 - dynamic, energetic */
     --grit-accent: 59 130 246; /* blue-500 - trustworthy, modern */
-    --grit-success: 34 197 94; /* green-500 - achievement, winning */
-    --grit-warning: 251 146 60; /* orange-400 - caution, alert */
+    --grit-neutral: 241 245 249; /* slate-100 - clean, minimal */
+    --grit-success: 34 197 94; /* green-500 - positive */
+    --grit-warning: 245 158 11; /* amber-500 - attention */
+    --grit-error: 239 68 68; /* red-500 - error state */
 
-    /* Typography scale - using Inter instead of Druk */
-    --font-heading: "Inter", system-ui, sans-serif;
-    --font-body: "Inter", system-ui, sans-serif;
-    --font-display: "Inter", system-ui, sans-serif;
-  }
+    /* Dashboard-specific colors */
+    --dashboard-background: 0 0 0;
+    --dashboard-surface: 255 255 255;
+    --dashboard-border: 229 231 235;
+    --dashboard-text: 15 23 42;
+    --dashboard-text-secondary: 107 114 128;
 
-  /* Remove global Druk font application */
-  /* * {
-    font-family: "Druk Wide Trial", sans-serif;
-  } */
+    /* Sidebar-specific colors */
+    --sidebar-background: 248 250 252; /* Light gray sidebar */
+    --sidebar-border: 229 231 235;
+    --sidebar-text: 15 23 42;
 
-  /* Override specific elements - using Inter instead of Druk */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: "Inter", system-ui, sans-serif;
-    font-weight: 600;
-  }
-
-  /* Apply Inter font to all elements */
-  body,
-  p,
-  span,
-  div,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: "Inter", system-ui, sans-serif;
-  }
-  p {
-    font-family: "Barlow", sans-serif;
-    font-weight: 400;
-  }
-  a {
-    font-family: "Barlow", sans-serif;
-    font-weight: 400;
+    /* Light theme */
+    --background: 0 0 0;
+    --foreground: 0 0 0;
+    --card: 0 0 0;
+    --card-foreground: 0 0 0;
+    --popover: 0 0 0;
+    --popover-foreground: 0 0 0;
+    --primary: 0 0 0;
+    --primary-foreground: 0 0 0;
+    --secondary: 0 0 0;
+    --secondary-foreground: 0 0 0;
+    --muted: 0 0 0;
+    --muted-foreground: 0 0 0;
+    --accent: 0 0 0;
+    --accent-foreground: 0 0 0;
+    --destructive: 0 0 0;
+    --destructive-foreground: 0 0 0;
+    --border: 0 0 0;
+    --input: 0 0 0;
+    --ring: 0 0 0;
+    --radius: 0.5rem;
   }
 
-  /* Fallback to ensure fonts load */
-  html {
-    font-family: "Inter", system-ui, sans-serif;
+  .dark {
+    /* Dark theme */
+    --background: 222.2 84 9.8;
+    --foreground: 210 200 180;
+    --card: 222.2 84 9.8;
+    --card-foreground: 210 200 180;
+    --popover: 222.2 84 9.8;
+    --popover-foreground: 210 200 180;
+    --primary: 210 200 180;
+    --primary-foreground: 222.2 84 9.8;
+    --secondary: 217.2 90.2 5.9;
+    --secondary-foreground: 210 200 180;
+    --muted: 217.2 90.2 5.9;
+    --muted-foreground: 215 204 170;
+    --accent: 216.2 91.2 15.8;
+    --accent-foreground: 210 200 180;
+    --destructive: 220 38.9 38.9;
+    --destructive-foreground: 210 200 180;
+    --input: 217.2 90.2 5.9;
+    --ring: 212.7 91.2 15.8;
+
+    /* Dark theme sidebar colors */
+    --sidebar-background: 30 41 59; /* Dark sidebar */
+    --sidebar-border: 229 231 235;
+    --sidebar-text: 210 200 180;
   }
+}
+
+:root {
+  --grit-accent: 59 130 246; /* blue-500 - trustworthy, modern */
+  --grit-success: 34 197 94; /* green-500 - achievement, winning */
+  --grit-warning: 251 146 60; /* orange-400 - caution, alert */
+}
+
+/* Typography scale - using Inter instead of Druk */
+:root {
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+}
+
+/* Override specific elements - using Inter instead of Druk */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* Apply Inter font to all elements */
+body,
+p,
+span,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", system-ui, sans-serif;
+}
+p {
+  font-family: "Barlow", sans-serif;
+  font-weight: 400;
+}
+a {
+  font-family: "Barlow", sans-serif;
+  font-weight: 400;
+}
+
+/* Fallback to ensure fonts load */
+html {
+  font-family: "Inter", system-ui, sans-serif;
 }
 
 @layer components {

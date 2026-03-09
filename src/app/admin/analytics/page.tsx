@@ -268,19 +268,35 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={12} />
                   <YAxis tickLine={false} axisLine={false} fontSize={12} width={40} />
                   <Tooltip
-                    cursor={{ stroke: 'hsl(var(--border))' }}
-                    contentStyle={{
-                      borderRadius: 8,
-                      border: '1px solid hsl(var(--border))',
-                      background: 'hsl(var(--background))',
-                      color: 'hsl(var(--foreground))',
-                      fontSize: 12,
+                    cursor={{ stroke: 'oklch(37.2% 0.044 257.287)' }}
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) return null
+                      return (
+                        <div
+                          className="rounded-lg border px-3 py-2 text-sm shadow-md"
+                          style={{
+                            backgroundColor: 'oklch(21% 0.034 264.665)',
+                            borderColor: 'oklch(37.2% 0.044 257.287)',
+                          }}
+                        >
+                          <p className="font-medium mb-1" style={{ color: 'white' }}>
+                            {label}
+                          </p>
+                          {payload.map((entry, index) => (
+                            <div key={index} className="flex flex-col">
+                              <span style={{ color: entry.color || entry.stroke }}>
+                                {entry.name || 'Revenue'}: {entry.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="revenue"
-                    stroke="hsl(var(--primary))"
+                    stroke="#e8192c"
                     strokeWidth={2}
                     dot={false}
                   />
@@ -303,16 +319,32 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={12} />
                   <YAxis tickLine={false} axisLine={false} fontSize={12} width={40} />
                   <Tooltip
-                    cursor={{ fill: 'hsl(var(--muted) / 0.4)' }}
-                    contentStyle={{
-                      borderRadius: 8,
-                      border: '1px solid hsl(var(--border))',
-                      background: 'hsl(var(--background))',
-                      color: 'hsl(var(--foreground))',
-                      fontSize: 12,
+                    cursor={{ fill: 'oklch(20.8% 0.042 265.755)' }}
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) return null
+                      return (
+                        <div
+                          className="rounded-lg border px-3 py-2 text-sm shadow-md"
+                          style={{
+                            backgroundColor: 'oklch(21% 0.034 264.665)',
+                            borderColor: 'oklch(37.2% 0.044 257.287)',
+                          }}
+                        >
+                          <p className="font-medium mb-1" style={{ color: 'white' }}>
+                            {label}
+                          </p>
+                          {payload.map((entry, index) => (
+                            <div key={index} className="flex flex-col">
+                              <span style={{ color: entry.color || entry.fill }}>
+                                {entry.name || 'Registrations'}: {entry.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )
                     }}
                   />
-                  <Bar dataKey="registrations" fill="hsl(var(--accent))" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="registrations" fill="#e8192c" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

@@ -230,7 +230,7 @@ export default function AdminDashboard() {
                 <span className="truncate">Add Portfolio</span>
               </Link>
             </Button>
-            <Button asChild variant="secondary" className="w-full sm:w-auto" aria-label="Create new event">
+            <Button asChild className="w-full sm:w-auto" aria-label="Create new event">
               <Link href="/admin/events/new">
                 <Calendar className="h-4 w-4 mr-2" aria-hidden="true" />
                 <span className="truncate">Create Event</span>
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
                 <span className="truncate">Add Organization</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full sm:w-auto" aria-label="View analytics dashboard">
+            <Button asChild className="w-full sm:w-auto" aria-label="View analytics dashboard">
               <Link href="/admin/analytics">
                 <ArrowUpRight className="h-4 w-4 mr-2" aria-hidden="true" />
                 <span className="truncate">View Analytics</span>
