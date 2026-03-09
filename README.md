@@ -2,6 +2,8 @@
 
 A modern, high-performance monorepo for sports organizations with Next.js 16, Turborepo, TailwindCSS, and sports-themed branding.
 
+<img width="1633" height="1047" alt="image" src="https://github.com/user-attachments/assets/2b05d2a2-2a26-48db-986d-a17438e8cc16" />
+
 ## 🏆 Overview
 
 Grit Digital Performance specializes in creating cutting-edge digital solutions for sports organizations, including:
