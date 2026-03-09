@@ -62,11 +62,11 @@ export async function GET(request: NextRequest) {
     // Calculate summary statistics
     const summary = {
       total: registrations.length,
-      pending: registrations.filter(r => r.status === 'pending').length,
-      confirmed: registrations.filter(r => r.status === 'confirmed').length,
-      waitlisted: registrations.filter(r => r.status === 'waitlisted').length,
-      cancelled: registrations.filter(r => r.status === 'cancelled').length,
-      refunded: registrations.filter(r => r.status === 'refunded').length,
+      pending: registrations.filter((r: any) => r.status === 'pending').length,
+      confirmed: registrations.filter((r: any) => r.status === 'confirmed').length,
+      waitlisted: registrations.filter((r: any) => r.status === 'waitlisted').length,
+      cancelled: registrations.filter((r: any) => r.status === 'cancelled').length,
+      refunded: registrations.filter((r: any) => r.status === 'refunded').length,
       totalRevenue: registrations.reduce((sum, r) => sum + (r.paid ? Number(r.amount) : 0), 0),
       pendingRevenue: registrations.reduce((sum, r) => sum + (!r.paid ? Number(r.amount) : 0), 0)
     }
