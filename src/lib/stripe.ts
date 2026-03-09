@@ -1,9 +1,19 @@
 import Stripe from 'stripe'
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-  typescript: true,
-})
+let stripeInstance: Stripe | null = null
+
+export const getStripe = () => {
+  if (!stripeInstance) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('STRIPE_SECRET_KEY is not configured')
+    }
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-02-25.clover',
+      typescript: true,
+    })
+  }
+  return stripeInstance
+}
 
 export interface StripePaymentIntent {
   clientSecret: string
@@ -20,6 +30,7 @@ export interface CreatePaymentIntentParams {
 
 export async function createPaymentIntent(params: CreatePaymentIntentParams): Promise<StripePaymentIntent> {
   const { amount, currency = 'usd', metadata, eventId, registrationId } = params
+  const stripe = getStripe()
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -47,6 +58,7 @@ export async function createPaymentIntent(params: CreatePaymentIntentParams): Pr
 }
 
 export async function confirmPayment(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+  const stripe = getStripe()
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
     return paymentIntent
@@ -57,6 +69,7 @@ export async function confirmPayment(paymentIntentId: string): Promise<Stripe.Pa
 }
 
 export async function createRefund(paymentIntentId: string, amount?: number): Promise<Stripe.Refund> {
+  const stripe = getStripe()
   try {
     const refundParams: Stripe.RefundCreateParams = {
       payment_intent: paymentIntentId,
@@ -75,6 +88,7 @@ export async function createRefund(paymentIntentId: string, amount?: number): Pr
 }
 
 export async function retrievePaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+  const stripe = getStripe()
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
     return paymentIntent
@@ -86,6 +100,7 @@ export async function retrievePaymentIntent(paymentIntentId: string): Promise<St
 
 // Webhook handler for Stripe events
 export function constructWebhookEvent(payload: string, signature: string): Stripe.Event {
+  const stripe = getStripe()
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     throw new Error('STRIPE_WEBHOOK_SECRET is not configured')
   }

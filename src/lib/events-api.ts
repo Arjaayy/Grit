@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { stripe, createPaymentIntent, confirmPayment, createRefund } from './stripe'
+import { createPaymentIntent, confirmPayment, createRefund, constructWebhookEvent } from './stripe'
 import type { 
   Organization, 
   Event, 
@@ -11,9 +11,18 @@ const globalForPrisma = globalThis as unknown as {
   eventsApiPrisma: PrismaClient | undefined
 }
 
-export const eventsApiPrisma = globalForPrisma.eventsApiPrisma ?? new PrismaClient()
+export const getEventsApiPrisma = () => {
+  if (!globalForPrisma.eventsApiPrisma) {
+    globalForPrisma.eventsApiPrisma = new PrismaClient()
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.eventsApiPrisma = globalForPrisma.eventsApiPrisma
+    }
+  }
+  return globalForPrisma.eventsApiPrisma
+}
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.eventsApiPrisma = eventsApiPrisma
+// Export a convenient alias for backward compatibility
+export const eventsApiPrisma = getEventsApiPrisma()
 
 // Types for API responses
 export interface CreateEventParams {
