@@ -1,6 +1,6 @@
 # Grit Digital Performance
 
-A modern, high-performance website built for sports organizations with Next.js 14, TailwindCSS, and sports-themed branding.
+A modern, high-performance monorepo for sports organizations with Next.js 16, Turborepo, TailwindCSS, and sports-themed branding.
 
 ## 🏆 Overview
 
@@ -9,11 +9,12 @@ Grit Digital Performance specializes in creating cutting-edge digital solutions 
 - Custom website development
 - Event registration systems with payment processing
 - Portfolio management
+- Admin dashboard for organization management
 - Digital consulting services
 
 ## 🚀 Features
 
-### Core Website Pages
+### Website Application
 
 - **Homepage** - Hero section with statistics and service overview
 - **Services** - Comprehensive service showcase with pricing
@@ -22,31 +23,38 @@ Grit Digital Performance specializes in creating cutting-edge digital solutions 
 - **Portfolio** - Project showcase with filtering capabilities
 - **Events** - Tournament listings with registration
 
+### Admin Application
+
+- **Dashboard** - Overview with metrics and analytics
+- **Portfolio Management** - CRUD operations for portfolio projects
+- **Event Management** - Create and manage tournaments and events
+- **Organization Management** - Manage sports organizations and clients
+- **Participant Management** - Track athletes and participants
+- **Payment Processing** - Monitor transactions and revenue
+- **Analytics** - Detailed insights and reporting
+- **Settings** - Application configuration
+
 ### Technical Features
 
-- ⚡ **Next.js 14** with App Router
+- ⚡ **Next.js 16** with App Router
 - 🎨 **TailwindCSS** with custom sports theme
 - 🧩 **Framer Motion** animations
 - 📱 **Fully Responsive** design
 - 🏃 **Sports-focused** branding and UX
 - 🔍 **SEO Optimized** content structure
 - ♿ **Accessibility** compliant components
-
-### Design System
-
-- **Color Palette**: Slate & Red sports theme
-- **Typography**: Inter font family
-- **Components**: Reusable sports-themed UI elements
-- **Animations**: Smooth transitions and micro-interactions
+- 📦 **Turborepo** for monorepo management
+- 🔐 **NextAuth.js** for authentication
 
 ## 🛠️ Tech Stack
 
-### Frontend
+### Frontend Frameworks
 
-- **Framework**: Next.js 14 (App Router)
+- **Website**: Next.js 16 (App Router)
+- **Admin**: Next.js 16 (App Router)
 - **Styling**: TailwindCSS v4
 - **Components**: shadcn/ui
-- **Icons**: Lucide React
+- **Icons**: Lucide React & Phosphor Icons
 - **Animations**: Framer Motion
 - **Forms**: React Hook Form + Zod
 
@@ -54,36 +62,59 @@ Grit Digital Performance specializes in creating cutting-edge digital solutions 
 
 - **Database**: MongoDB with Prisma ORM
 - **Payments**: Stripe integration
+- **Authentication**: NextAuth.js with credentials provider
 - **Deployment**: Vercel
 
-### Development Tools
+### Monorepo & Development Tools
 
+- **Monorepo**: Turborepo
 - **Package Manager**: npm
 - **Code Quality**: ESLint + TypeScript
 - **Version Control**: Git
+- **Shared Packages**: UI components, utilities, configs
 
 ## 📁 Project Structure
 
 ```
 grit-digital-performance/
-├── src/
-│   ├── app/                    # Next.js 14 App Router pages
-│   │   ├── page.tsx           # Homepage
-│   │   ├── about/              # About page
-│   │   ├── contact/            # Contact page
-│   │   ├── services/           # Services page
-│   │   ├── portfolio/           # Portfolio page
-│   │   ├── events/              # Events page
-│   │   ├── layout.tsx           # Root layout
-│   │   └── globals.css          # Global styles
-│   ├── components/
-│   │   ├── layout/             # Header, Footer, Layout
-│   │   └── ui/                 # Reusable UI components
-│   ├── styles/               # Custom CSS and design tokens
-│   └── utils/                # Utility functions
-├── prisma/               # Database schema and migrations
-├── public/               # Static assets
-└── tailwind.config.ts    # TailwindCSS configuration
+├── apps/                          # Applications
+│   ├── website/                   # Public website
+│   │   ├── src/
+│   │   │   ├── app/              # Next.js pages
+│   │   │   ├── components/       # Website components
+│   │   │   ├── lib/              # Utilities and API calls
+│   │   │   └── styles/           # Global styles
+│   │   ├── public/               # Static assets
+│   │   └── package.json
+│   └── admin/                    # Admin dashboard
+│       ├── src/
+│       │   ├── app/              # Next.js pages (no /admin prefix)
+│       │   │   ├── auth/         # Authentication pages
+│       │   │   ├── portfolio/    # Portfolio management
+│       │   │   ├── events/       # Event management
+│       │   │   ├── organizations/ # Organization management
+│       │   │   ├── participants/ # Participant management
+│       │   │   ├── payments/     # Payment management
+│       │   │   ├── analytics/    # Analytics dashboard
+│       │   │   └── settings/     # Settings
+│       │   ├── components/       # Admin components
+│       │   ├── lib/              # Admin utilities
+│       │   └── types/            # TypeScript definitions
+│       ├── public/               # Static assets
+│       └── package.json
+├── packages/                     # Shared packages
+│   ├── ui/                       # Shared UI components
+│   │   ├── src/ui/              # Reusable components
+│   │   └── package.json
+│   ├── utils/                    # Shared utilities
+│   │   └── package.json
+│   └── config/                   # Shared configurations
+│       ├── eslint/              # ESLint configs
+│       ├── tailwind/            # TailwindCSS configs
+│       └── typescript/          # TypeScript configs
+├── turbo.json                    # Turborepo configuration
+├── package.json                  # Root package.json
+└── README.md
 ```
 
 ## 🚀 Getting Started
@@ -111,39 +142,52 @@ grit-digital-performance/
 
 3. **Set up environment variables**
 
+   Create environment files for each app:
+
    ```bash
-   cp .env.example .env.local
+   # Website
+   cp apps/website/.env.example apps/website/.env.local
+
+   # Admin
+   cp apps/admin/.env.example apps/admin/.env.local
    ```
 
-   Configure your environment variables in `.env.local`:
-   - Database connection strings
-   - Stripe API keys
-   - Next.js configuration
-
-4. **Run the development server**
+4. **Run development servers**
 
    ```bash
+   # Start all applications
    npm run dev
+
+   # Or start individual apps
+   npm run dev:website    # Website on http://localhost:3000
+   npm run dev:admin      # Admin on http://localhost:3001
    ```
 
 5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+   - Website: [http://localhost:3000](http://localhost:3000)
+   - Admin: [http://localhost:3001](http://localhost:3001)
 
 ## 🎯 Available Scripts
 
 ```bash
 # Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
+npm run dev              # Start all applications
+npm run dev:website      # Start website only
+npm run dev:admin        # Start admin only
+
+# Build
+npm run build            # Build all applications
+npm run build:website    # Build website only
+npm run build:admin      # Build admin only
 
 # Database
-npm run db:push    # Push schema to database
-npm run db:studio   # Open Prisma Studio
+npm run db:push          # Push schema to database
+npm run db:studio        # Open Prisma Studio
 
 # Code Quality
-npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript checks
+npm run lint             # Run ESLint on all packages
+npm run type-check       # Run TypeScript checks
+npm run test             # Run tests
 ```
 
 ## 🎨 Design System
@@ -161,7 +205,7 @@ npm run type-check   # Run TypeScript checks
 - **Headings**: Bold weights for impact
 - **Body**: Regular weights for readability
 
-### Components
+### Shared Components
 
 - **SportsCard**: Reusable card for sports content
 - **SportsHero**: Prominent display sections
@@ -169,55 +213,33 @@ npm run type-check   # Run TypeScript checks
 - **LoadingStates**: Skeletons and spinners
 - **ErrorBoundary**: Graceful error handling
 
-## 📱 Pages Overview
+## 📱 Applications Overview
 
-### Homepage (`/`)
+### Website Application (`/`)
 
-- Hero section with gradient background
-- Key statistics display
-- Service overview grid
-- Call-to-action sections
+- Public-facing marketing website
+- Event listings and registration
+- Portfolio showcase
+- Contact and service information
 
-### Services (`/services`)
+### Admin Application (`/`)
 
-- Service showcase with detailed descriptions
-- Pricing information
-- Feature lists
-- Process explanation
+- **Dashboard**: Overview with metrics and activity feeds
+- **Portfolio**: Manage portfolio projects and case studies
+- **Events**: Create and manage tournaments with registration
+- **Organizations**: Manage sports organizations and clients
+- **Participants**: Track athletes and participant data
+- **Payments**: Monitor transactions and revenue
+- **Analytics**: Detailed insights and reporting
+- **Settings**: Application configuration
 
-### About (`/about`)
-
-- Company story and mission
-- Core values section
-- Team member profiles
-- Impact statistics
-
-### Contact (`/contact`)
-
-- Multi-channel contact options
-- Comprehensive inquiry form
-- FAQ section
-- Service selection dropdown
-
-### Portfolio (`/portfolio`)
-
-- Project grid with filtering
-- Category-based organization
-- Project statistics
-- Case study links
-
-### Events (`/events`)
-
-- Tournament listings
-- Registration status indicators
-- Event details and pricing
-- Host your event section
+**Note**: Admin app uses clean URLs without `/admin` prefix since it's deployed as `admin.gritdp.com`
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-Create `.env.local` with:
+**Website** (`apps/website/.env.local`):
 
 ```env
 # Database
@@ -232,6 +254,14 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key"
 ```
 
+**Admin** (`apps/admin/.env.local`):
+
+```env
+# Next.js
+NEXTAUTH_URL="http://localhost:3001"
+NEXTAUTH_SECRET="your-secret-key"
+```
+
 ### TailwindCSS Configuration
 
 The project uses TailwindCSS v4 with:
@@ -240,13 +270,14 @@ The project uses TailwindCSS v4 with:
 - Extended font sizes and spacing
 - Custom animations and transitions
 - Responsive breakpoints
+- Shared configuration across apps
 
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
 
 1. Connect your GitHub repository to Vercel
-2. Configure environment variables in Vercel dashboard
+2. Configure environment variables for each app
 3. Deploy automatically on push to main branch
 
 ### Manual Deployment
@@ -267,17 +298,17 @@ npm run start
 
 ### Component Development
 
-- Create reusable components in `src/components/ui/`
+- Create reusable components in `packages/ui/src/ui/`
 - Use sports-themed design tokens
 - Implement proper error boundaries
 - Add loading states for better UX
 
-### Performance Considerations
+### Monorepo Best Practices
 
-- Optimize images with Next.js Image component
-- Use code splitting for large pages
-- Implement proper caching strategies
-- Monitor Core Web Vitals
+- Share UI components between applications
+- Use consistent configuration packages
+- Implement proper dependency management
+- Follow Turborepo caching strategies
 
 ## 🤝 Contributing
 
@@ -309,26 +340,24 @@ For support or inquiries:
 - [x] Portfolio showcase
 - [x] Events listing
 
-### Phase 2: Portfolio Management
+### Phase 2: Admin Dashboard ✅
 
-- [ ] Database schema design
-- [ ] Project filtering and search
-- [ ] Individual project pages
-- [ ] Case study presentations
+- [x] Monorepo structure with Turborepo
+- [x] Admin application with authentication
+- [x] Portfolio management
+- [x] Event management
+- [x] Organization management
+- [x] Participant tracking
+- [x] Payment monitoring
+- [x] Analytics dashboard
 
-### Phase 3: Event Registration
+### Phase 3: Advanced Features
 
-- [ ] Stripe payment integration
-- [ ] Registration forms
-- [ ] Event management dashboard
-- [ ] Revenue tracking
-
-### Phase 4: Advanced Features
-
-- [ ] User authentication
-- [ ] Admin dashboard
-- [ ] Analytics integration
+- [ ] Real-time notifications
+- [ ] Advanced analytics
 - [ ] Mobile app development
+- [ ] API documentation
+- [ ] Performance monitoring
 
 ---
 
