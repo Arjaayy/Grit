@@ -16,7 +16,7 @@ export async function OPTIONS() {
 
 export async function POST(request: NextRequest) {
   try {
-    const headersList = headers()
+    const headersList = await headers()
     const origin = headersList.get('origin')
     
     // Update CORS headers to allow specific origin

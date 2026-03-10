@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Note: Portal app has been removed from this monorepo
+# All functionality is now consolidated into the admin app
+
 # dependencies
 /node_modules
 **/node_modules

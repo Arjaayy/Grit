@@ -19,7 +19,7 @@ export async function GET(
   { params }: { params: { eventId: string } }
 ) {
   try {
-    const headersList = headers()
+    const headersList = await headers()
     const origin = headersList.get('origin')
     
     // Update CORS headers to allow specific origin

@@ -116,6 +116,7 @@ model Organization {
   logo              String?
   description       String?
   sportCategory     String
+  domain            String?   // Custom domain for client site (e.g., "tuguegaraoleague.gritdp.com")
   address           String?
   city              String?
   state             String?
@@ -225,6 +226,8 @@ model Registration {
   
   // Status
   status            String    @default("pending") // "pending", "confirmed", "waitlisted", "cancelled", "refunded"
+  source            String    @default("internal") // "internal", "external", "api"
+  sourceDetails     Json?     // Source-specific details (domain, user_agent, etc.)
   approvedAt        DateTime?
   cancelledAt       DateTime?
   refundAmount      Decimal?

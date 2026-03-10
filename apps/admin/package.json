@@ -6,7 +6,14 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node tests/test-final-integration",
+    "test:functionality": "node tests/test-admin-functionality",
+    "test:cors": "node tests/test-cors-policy",
+    "test:registration": "node tests/test-registration-flow",
+    "test:performance": "node tests/test-performance",
+    "test:disaster-recovery": "node tests/test-disaster-recovery",
+    "test:all": "npm run test && npm run test:functionality && npm run test:cors && npm run test:registration && npm run test:performance && npm run test:disaster-recovery"
   },
   "dependencies": {
     "next": "16.1.6",
