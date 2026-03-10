@@ -8,8 +8,8 @@ import {
   Copy,
   Eye,
   EyeSlash,
-  Trash2,
-  RefreshCw,
+  Trash,
+  ArrowClockwise,
   Shield,
   Globe,
 } from '@phosphor-icons/react'
@@ -282,14 +282,14 @@ export default function ApiKeyManagement() {
                           size="sm"
                           onClick={() => regenerateKey(apiKey.id)}
                         >
-                          <RefreshCw className="h-4 w-4" />
+                          <ArrowClockwise className="h-4 w-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="sm"
                           onClick={() => deleteKey(apiKey.id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

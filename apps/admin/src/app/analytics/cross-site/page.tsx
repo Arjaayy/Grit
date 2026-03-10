@@ -25,7 +25,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { Badge } from '@repo/ui'
 import { Button } from '@repo/ui'
-import { Download, TrendingUp, Globe, Users } from '@phosphor-icons/react'
+import { Download, ChartLine, Globe, Users } from '@phosphor-icons/react'
 import AdminPageHeader from '@/components/admin/admin-page-header'
 
 // Mock data for cross-site registration analytics
@@ -129,7 +129,7 @@ export default function CrossSiteAnalytics() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Growth Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <ChartLine className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+28%</div>

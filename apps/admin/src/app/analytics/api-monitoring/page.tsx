@@ -15,15 +15,15 @@ import {
   AreaChart,
 } from 'recharts'
 import { 
-  Activity,
-  AlertTriangle,
+  ChartBar,
+  Warning,
   CheckCircle,
-  Clock,
-  Cpu,
-  Globe,
-  Server,
-  TrendingUp,
+  HardDrive,
+  TrendUp,
   Users,
+  Clock,
+  Globe,
+  Cpu,
 } from '@phosphor-icons/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { Badge } from '@repo/ui'
@@ -65,8 +65,8 @@ const mockDomainMetrics = [
 
 const mockSystemHealth = [
   { metric: 'CPU Usage', value: 45, status: 'healthy', icon: Cpu },
-  { metric: 'Memory', value: 62, status: 'healthy', icon: Server },
-  { metric: 'Database', value: 78, status: 'warning', icon: Activity },
+  { metric: 'Memory', value: 62, status: 'healthy', icon: HardDrive },
+  { metric: 'Database', value: 78, status: 'warning', icon: ChartBar },
   { metric: 'Network', value: 34, status: 'healthy', icon: Globe },
 ]
 
@@ -94,8 +94,8 @@ export default function ApiMonitoringDashboard() {
   const getHealthIcon = (status: string) => {
     switch (status) {
       case 'healthy': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'warning': return <AlertTriangle className="h-4 w-4 text-yellow-500" />
-      case 'critical': return <AlertTriangle className="h-4 w-4 text-red-500" />
+      case 'warning': return <Warning className="h-4 w-4 text-yellow-500" />
+      case 'critical': return <Warning className="h-4 w-4 text-red-500" />
       default: return <Clock className="h-4 w-4 text-gray-500" />
     }
   }
@@ -119,7 +119,7 @@ export default function ApiMonitoringDashboard() {
               </SelectContent>
             </Select>
             <Button variant="outline">
-              <Activity className="mr-2 h-4 w-4" />
+              <ChartBar className="mr-2 h-4 w-4" />
               Refresh
             </Button>
           </div>
@@ -131,7 +131,7 @@ export default function ApiMonitoringDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalRequests.toLocaleString()}</div>
@@ -144,7 +144,7 @@ export default function ApiMonitoringDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            <Warning className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{errorRate}%</div>

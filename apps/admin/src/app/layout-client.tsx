@@ -5,7 +5,6 @@ import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from '@/components/dashboard/theme-provider'
 import { SidebarProvider, SidebarInset } from '@repo/ui'
 import AdminSidebar from '@/components/admin/sidebar'
-import { ErrorBoundary } from '@/components/admin/error-boundary'
 import { NotificationProvider } from '@/components/admin/notifications'
 import './admin.css'
 
@@ -35,9 +34,7 @@ export default function ClientLayout({
               <AdminSidebar />
               <SidebarInset>
                 <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-3 sm:pt-4 min-h-0 admin-layout">
-                  <ErrorBoundary>
-                    {children}
-                  </ErrorBoundary>
+                  {children}
                 </div>
               </SidebarInset>
             </SidebarProvider>

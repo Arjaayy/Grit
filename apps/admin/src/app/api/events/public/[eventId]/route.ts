@@ -16,7 +16,7 @@ export async function OPTIONS() {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const headersList = await headers()
