@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: "Grit Digital Performance",
     images: [
       {
-        url: "apps\website\public\logo\gritLogo.png",
+        url: "/logo/gritLogo.png",
         width: 1200,
         height: 630,
         alt: "Grit Digital Performance",
@@ -28,14 +28,13 @@ export const metadata: Metadata = {
     title: "Grit Digital Performance",
     description:
       "High-performance websites for sports organizations and teams.",
-    images: ["https://grit-website-six.vercel.app/og-image.png"],
+    images: ["/logo/gritLogo.png"],
   },
 
   alternates: {
     canonical: "https://grit-website-six.vercel.app/",
   },
 };
-
 
 import { cn } from "@repo/utils";
 import { Trophy, Users, Target, TrendingUp } from "lucide-react";
