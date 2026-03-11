@@ -16,6 +16,7 @@ import {
   Key,
   Code,
   Gear,
+  TestTube,
 } from '@phosphor-icons/react'
 import { Avatar, AvatarFallback } from '@repo/ui'
 import {
@@ -63,6 +64,11 @@ const organizationItems = [
     title: "Events",
     url: "/events",
     icon: Calendar,
+  },
+  {
+    title: "Event Playground",
+    url: "/events/playground",
+    icon: TestTube,
   },
   {
     title: "Participants",
