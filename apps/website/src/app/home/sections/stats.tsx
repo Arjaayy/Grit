@@ -1,3 +1,42 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Grit Digital Performance - Sports Organization Websites",
+  description:
+    "Grit Digital Performance builds high-performance websites for sports organizations and teams.",
+
+  openGraph: {
+    title: "Grit Digital Performance - Sports Organization Websites",
+    description:
+      "High-performance websites for sports organizations and teams.",
+    url: "https://grit-website-six.vercel.app/",
+    siteName: "Grit Digital Performance",
+    images: [
+      {
+        url: "apps\website\public\logo\gritLogo.png",
+        width: 1200,
+        height: 630,
+        alt: "Grit Digital Performance",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Grit Digital Performance",
+    description:
+      "High-performance websites for sports organizations and teams.",
+    images: ["https://grit-website-six.vercel.app/og-image.png"],
+  },
+
+  alternates: {
+    canonical: "https://grit-website-six.vercel.app/",
+  },
+};
+
+
 import { cn } from "@repo/utils";
 import { Trophy, Users, Target, TrendingUp } from "lucide-react";
 
