@@ -20,12 +20,22 @@ export const metadata: Metadata = {
   description: "Professional website development and event registration systems for sports organizations. Transform your digital presence with our cutting-edge solutions.",
   icons: {
     icon: [
-      { url: "/favicon/favicon-16x16.png", sizes: "1200x630", type: "image/png" },
-      { url: "/favicon/favicon-32x32.png", sizes: "1200x630", type: "image/png" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
     ],
     apple: "/favicon/apple-touch-icon.png",
     shortcut: "/favicon/favicon.ico",
   },
+  keywords: [
+    "sports website development",
+    "event registration system",
+    "digital presence for sports",
+    "Grit Digital Performance",
+    "sports organization websites"
+  ],
+  authors: [
+    { name: "Grit Digital Performance" } // ✅ correct usage
+  ],
   openGraph: {
     title: "Grit Digital Performance - Sports Organization Websites & Event Registration",
     description: "Professional website development and event registration systems for sports organizations. Transform your digital presence with our cutting-edge solutions.",
@@ -33,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Grit Digital Performance",
     images: [
       {
-        url: "https://grit-website-six.vercel.app/logo/gritLogo.png", // updated path
+        url: "https://grit-website-six.vercel.app/logo/gritLogo.png",
         width: 1200,
         height: 630,
         alt: "Grit Digital Performance Logo",
@@ -42,6 +52,19 @@ export const metadata: Metadata = {
     ],
     locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Grit Digital Performance - Sports Organization Websites & Event Registration",
+    description: "Professional website development and event registration systems for sports organizations. Transform your digital presence with our cutting-edge solutions.",
+    site: "@GritDigital",
+    creator: "@GritDigital",
+    images: ["https://grit-website-six.vercel.app/logo/gritLogo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
   },
 };
 
